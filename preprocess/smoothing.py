@@ -85,6 +85,49 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_f
 
     (F.T).to_csv(output_filename)
 
+def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None,exp_preprocessed_filename=None,output_filename=None,network_file=None,alpha=0.7,reverse=False,conserve_exp_normal_sample=True):
+    '''
+    mut_preprocessed_filename:input preprocessed mutation filename
+    exp_preprocessed_filename : input preprocessed exp filename
+    network_file ; sif formatted network file
+    alpha : random walk parameter. Weight on restart part
+    reverse : TRUE if you want to reverse mut_preprocessed matrix. 0 to 1 and 1 to 0.
+    '''
+
+    mut_preprocessed_df = pd.read_csv(mut_preprocessed_filename,index_col=0)
+    if reverse==True:
+        mut_preprocessed_df = mut_preprocessed_df.replace([0,1],[1,0])
+    exp_preprocessed_df = pd.read_csv(exp_preprocessed_filename,index_col=0)
+    print "network smoothing with exp start\n" + "prprocessed mutation filename:"+mut_preprocessed_filename+"\n"+"preprocessed exp filename:"+exp_preprocessed_filename+"\n"+"network filename for smoothing:"+network_file+"\n"+"output filename"+output_filename
+    s_time = time.time()
+    n_iter=0
+    network_df = network_preprocess.get_network(network_file)
+    mut_preprocessed_df,exp_preprocessed_df= filter.match_sample(mut_preprocessed_df=mut_preprocessed_df,exp_preprocessed_df=exp_preprocessed_df,conserve_exp_normal_sample=conserve_exp_normal_sample)
+    mut_preprocessed_df,network_df,exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=True,exp_preprocessed_df=exp_preprocessed_df)
+
+    patient_mutation_df = mut_preprocessed_df.T
+    patient_exp_df = exp_preprocessed_df.T
+
+
+    if (patient_mutation_df.shape != patient_exp_df.shape):
+        raise Exception("mutation and exp data shape are not matched")
+
+    F_0 = patient_mutation_df.copy(deep=True)
+    F = patient_mutation_df.copy(deep=True)
+    while True:
+        n_iter = n_iter + 1
+
+        F_t = F.copy(deep=True)
+        #F = np.multiply(((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)), patient_exp_df/np.max(np.max(np.abs(patient_exp_df))))
+        F = ((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0))
+
+        if np.sum(np.asmatrix(np.square((F-F_t)))) < (1/1000000.0):
+            print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
+            break
+
+    F = np.matmul(F, patient_exp_df/np.max(np.max(np.abs(patient_exp_df))))
+    
+    (F.T).to_csv(output_filename)
 
 
 if __name__ == '__main__':
