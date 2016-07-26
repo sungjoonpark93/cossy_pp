@@ -8,8 +8,8 @@ import time
 
 import pandas as pd
 import numpy as np
-import code.network.preprocess as network_preprocess
-import code.base.filter as filter
+import network.preprocess as network_preprocess
+import base.filter as filter
 
 
 def network_smoothing(mut_preproceesed_filename=None,output_filename =None,network_file=None,alpha=0.7):
@@ -44,7 +44,7 @@ def network_smoothing(mut_preproceesed_filename=None,output_filename =None,netwo
     (F.T).to_csv(output_filename)
 
 
-def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_filename=None,output_filenmae=None,network_file=None,alpha=0.7,reverse=False,conserve_exp_normal_sample=True):
+def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_filename=None,output_filename=None,network_file=None,alpha=0.7,reverse=False,conserve_exp_normal_sample=True):
     '''
     mut_preprocessed_filename:input preprocessed mutation filename
     exp_preprocessed_filename : input preprocessed exp filename
@@ -83,7 +83,7 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_f
             print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
             break
 
-    (F.T).to_csv(output_filenmae)
+    (F.T).to_csv(output_filename)
 
 
 

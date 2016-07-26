@@ -1,6 +1,6 @@
 __author__ = 'SungJoonPark'
 
-import code.base.filter as filter
+import base.filter as filter
 import pandas as pd
 import os
 

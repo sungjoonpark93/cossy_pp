@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 
-from code.base import filter
+from base import filter
 
 
 def make_gct_file(df,output_filename=None):

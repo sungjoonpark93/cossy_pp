@@ -2,7 +2,7 @@ __author__ = 'SungJoonPark'
 __author__ = 'SungJoonPark'
 
 import pandas as pd
-import numpy as n
+import numpy as np
 
 def get_network(network_file):
     #get sif file formatted network file and return to adjacency matrix
