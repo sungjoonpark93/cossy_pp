@@ -12,7 +12,7 @@ def order_sample(df):
     tumor_normal_divide_index = len(tumor_sample_list)
     return ordered_df,tumor_normal_divide_index
 
-
+  
 def get_normal_sample_list(preprocessed_df):
     normal_sample_list = [sample for sample in preprocessed_df.columns if int(sample[13:15]) >= 10]
     return normal_sample_list
