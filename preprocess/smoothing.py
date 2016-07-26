@@ -77,7 +77,7 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_f
         n_iter = n_iter + 1
 
         F_t = F.copy(deep=True)
-        F = np.multiply(((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)), patient_exp_df/np.max(np.max(np.abs(patient_exp_df))))
+        F = np.multiply(((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)), patient_exp_df/np.max(np.abs(patient_exp_df), axis=1))
 
         if np.sum(np.asmatrix(np.square((F-F_t)))) < (1/1000000.0):
             print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
@@ -125,7 +125,7 @@ def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None,exp_prepr
             print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
             break
 
-    F = np.matmul(F, patient_exp_df/np.max(np.max(np.abs(patient_exp_df))))
+    F = np.matmul(F, patient_exp_df/np.max(np.abs(patient_exp_df)), axis=1)
     
     (F.T).to_csv(output_filename)
 
