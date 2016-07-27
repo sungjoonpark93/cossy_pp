@@ -10,21 +10,22 @@ import pandas as pd
 import numpy as np
 import network.preprocess as network_preprocess
 import base.filter as filter
+import base.baseVariables as basevar
 
 
-def network_smoothing(mut_preproceesed_filename=None,output_filename =None,network_file=None,alpha=0.7):
+def network_smoothing(mut_preproceesed_filename=None, output_filename=None, network_file=None, alpha=0.7):
     '''
     preprocessed_filename:input preprocessed mutation filename
     network_file ; sif formatted network file
     alpha : random walk parameter. Weight on restart part
     '''
-    print "network smoothing start\n" + "prprocessed mutation filename:"+mut_preproceesed_filename+"\n"+"network filename for smoothing:"+network_file+"\n"+"output filename"+output_filename
+    print "network smoothing start\n" + "prprocessed mutation filename:" + mut_preproceesed_filename + "\n" + "network filename for smoothing:" + network_file + "\n" + "output filename" + output_filename
     s_time = time.time()
-    n_iter=0
+    n_iter = 0
 
-    mut_preprocessed_df = pd.read_csv(mut_preproceesed_filename,index_col=0)
+    mut_preprocessed_df = pd.read_csv(mut_preproceesed_filename, index_col=0)
     network_df = network_preprocess.get_network(network_file)
-    mut_preprocessed_df,network_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df)
+    mut_preprocessed_df, network_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df, network_df=network_df)
     patient_mutation_df = mut_preprocessed_df.T
 
     F_0 = patient_mutation_df.copy(deep=True)
@@ -34,17 +35,17 @@ def network_smoothing(mut_preproceesed_filename=None,output_filename =None,netwo
         n_iter = n_iter + 1
 
         F_t = F.copy(deep=True)
-        F = (alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)
+        F = (alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)
 
-        if np.sum(np.asmatrix(np.square((F-F_t)))) < (1/1000000.0):
-            print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
+        if np.sum(np.asmatrix(np.square((F - F_t)))) < (1 / 1000000.0):
+            print "network smoothing end. ", str(n_iter), "iterations, " , str((time.time() - s_time) / 60.0) , " minutes elapsed\n"
             break
 
 
     (F.T).to_csv(output_filename)
 
 
-def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_filename=None,output_filename=None,network_file=None,alpha=0.7,reverse=False,conserve_exp_normal_sample=True):
+def network_smoothing_with_exp(mut_preprocessed_filename=None, exp_preprocessed_filename=None, output_filename=None, network_file=None, alpha=0.7, reverse=False, conserve_exp_normal_sample=True):
     '''
     mut_preprocessed_filename:input preprocessed mutation filename
     exp_preprocessed_filename : input preprocessed exp filename
@@ -53,16 +54,16 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_f
     reverse : TRUE if you want to reverse mut_preprocessed matrix. 0 to 1 and 1 to 0.
     '''
 
-    mut_preprocessed_df = pd.read_csv(mut_preprocessed_filename,index_col=0)
-    if reverse==True:
-        mut_preprocessed_df = mut_preprocessed_df.replace([0,1],[1,0])
-    exp_preprocessed_df = pd.read_csv(exp_preprocessed_filename,index_col=0)
-    print "network smoothing with exp start\n" + "prprocessed mutation filename:"+mut_preprocessed_filename+"\n"+"preprocessed exp filename:"+exp_preprocessed_filename+"\n"+"network filename for smoothing:"+network_file+"\n"+"output filename"+output_filename
+    mut_preprocessed_df = pd.read_csv(mut_preprocessed_filename, index_col=0)
+    if reverse == True:
+        mut_preprocessed_df = mut_preprocessed_df.replace([0, 1], [1, 0])
+    exp_preprocessed_df = pd.read_csv(exp_preprocessed_filename, index_col=0)
+    print "network smoothing with exp start\n" + "prprocessed mutation filename:" + mut_preprocessed_filename + "\n" + "preprocessed exp filename:" + exp_preprocessed_filename + "\n" + "network filename for smoothing:" + network_file + "\n" + "output filename" + output_filename
     s_time = time.time()
-    n_iter=0
+    n_iter = 0
     network_df = network_preprocess.get_network(network_file)
-    mut_preprocessed_df,exp_preprocessed_df= filter.match_sample(mut_preprocessed_df=mut_preprocessed_df,exp_preprocessed_df=exp_preprocessed_df,conserve_exp_normal_sample=conserve_exp_normal_sample)
-    mut_preprocessed_df,network_df,exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=True,exp_preprocessed_df=exp_preprocessed_df)
+    mut_preprocessed_df, exp_preprocessed_df = filter.match_sample(mut_preprocessed_df=mut_preprocessed_df, exp_preprocessed_df=exp_preprocessed_df, conserve_exp_normal_sample=conserve_exp_normal_sample)
+    mut_preprocessed_df, network_df, exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df, network_df=network_df, is_exp=True, exp_preprocessed_df=exp_preprocessed_df)
 
     patient_mutation_df = mut_preprocessed_df.T
     patient_exp_df = exp_preprocessed_df.T
@@ -77,15 +78,15 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None,exp_preprocessed_f
         n_iter = n_iter + 1
 
         F_t = F.copy(deep=True)
-        F = np.multiply(((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)), patient_exp_df/np.max(np.abs(patient_exp_df), axis=1))
+        F = np.multiply(((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)), patient_exp_df / np.max(np.abs(patient_exp_df), axis=1))
 
-        if np.sum(np.asmatrix(np.square((F-F_t)))) < (1/1000000.0):
-            print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
+        if np.sum(np.asmatrix(np.square((F - F_t)))) < (1 / 1000000.0):
+            print "network smoothing end. ", str(n_iter), "iterations, " , str((time.time() - s_time) / 60.0) , " minutes elapsed\n"
             break
 
     (F.T).to_csv(output_filename)
 
-def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None,exp_preprocessed_filename=None,output_filename=None,network_file=None,alpha=0.7,reverse=False,conserve_exp_normal_sample=True):
+def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None, exp_preprocessed_filename=None, output_filename=None, network_file=None, alpha=0.7, reverse=False, conserve_exp_normal_sample=True):
     '''
     mut_preprocessed_filename:input preprocessed mutation filename
     exp_preprocessed_filename : input preprocessed exp filename
@@ -94,16 +95,16 @@ def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None,exp_prepr
     reverse : TRUE if you want to reverse mut_preprocessed matrix. 0 to 1 and 1 to 0.
     '''
 
-    mut_preprocessed_df = pd.read_csv(mut_preprocessed_filename,index_col=0)
-    if reverse==True:
-        mut_preprocessed_df = mut_preprocessed_df.replace([0,1],[1,0])
-    exp_preprocessed_df = pd.read_csv(exp_preprocessed_filename,index_col=0)
-    print "network smoothing with exp start\n" + "prprocessed mutation filename:"+mut_preprocessed_filename+"\n"+"preprocessed exp filename:"+exp_preprocessed_filename+"\n"+"network filename for smoothing:"+network_file+"\n"+"output filename"+output_filename
+    mut_preprocessed_df = pd.read_csv(mut_preprocessed_filename, index_col=0)
+    if reverse == True:
+        mut_preprocessed_df = mut_preprocessed_df.replace([0, 1], [1, 0])
+    exp_preprocessed_df = pd.read_csv(exp_preprocessed_filename, index_col=0)
+    print "network smoothing with exp start\n" + "prprocessed mutation filename:" + mut_preprocessed_filename + "\n" + "preprocessed exp filename:" + exp_preprocessed_filename + "\n" + "network filename for smoothing:" + network_file + "\n" + "output filename" + output_filename
     s_time = time.time()
-    n_iter=0
+    n_iter = 0
     network_df = network_preprocess.get_network(network_file)
-    mut_preprocessed_df,exp_preprocessed_df= filter.match_sample(mut_preprocessed_df=mut_preprocessed_df,exp_preprocessed_df=exp_preprocessed_df,conserve_exp_normal_sample=conserve_exp_normal_sample)
-    mut_preprocessed_df,network_df,exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=True,exp_preprocessed_df=exp_preprocessed_df)
+    mut_preprocessed_df, exp_preprocessed_df = filter.match_sample(mut_preprocessed_df=mut_preprocessed_df, exp_preprocessed_df=exp_preprocessed_df, conserve_exp_normal_sample=conserve_exp_normal_sample)
+    mut_preprocessed_df, network_df, exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df, network_df=network_df, is_exp=True, exp_preprocessed_df=exp_preprocessed_df)
 
     patient_mutation_df = mut_preprocessed_df.T
     patient_exp_df = exp_preprocessed_df.T
@@ -118,14 +119,14 @@ def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None,exp_prepr
         n_iter = n_iter + 1
 
         F_t = F.copy(deep=True)
-        #F = np.multiply(((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)), patient_exp_df/np.max(np.max(np.abs(patient_exp_df))))
-        F = ((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0))
+        # F = np.multiply(((alpha*np.matmul(F,network_df)) + ((1-alpha)*F_0)), patient_exp_df/np.max(np.max(np.abs(patient_exp_df))))
+        F = ((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0))
 
-        if np.sum(np.asmatrix(np.square((F-F_t)))) < (1/1000000.0):
-            print "network smoothing end. ", str(n_iter), "iterations, " ,str((time.time()-s_time) / 60.0) ," minutes elapsed\n"
+        if np.sum(np.asmatrix(np.square((F - F_t)))) < (1 / 1000000.0):
+            print "network smoothing end. ", str(n_iter), "iterations, " , str((time.time() - s_time) / 60.0) , " minutes elapsed\n"
             break
 
-    F = np.matmul(F, patient_exp_df/np.max(np.abs(patient_exp_df)), axis=1)
+    F = np.matmul(F, patient_exp_df / np.max(np.abs(patient_exp_df)), axis=1)
     
     (F.T).to_csv(output_filename)
 
@@ -220,3 +221,17 @@ if __name__ == '__main__':
     # network_smoothing_with_exp(mut_preprocessed_filename=mut_preprocessed_filename,exp_preprocessed_filename=exp_preprocessed_filename,output_filenmae=output_filename,network_file=reactome_filename,reverse=True)
 
 
+    for dataset in basevar.dataset_names:
+        net = basevar.network["string"]
+        ofname = basevar.smoothed_dir[dataset] + "mut/" + dataset + ".mut.smoothed.string.csv"
+        network_smoothing(mut_preproceesed_filename=basevar.mut_data[dataset], output_filename=ofname, network_file=net, alpha=0.7)
+        ofname = basevar.smoothed_dir[dataset] + "mut-exp/" + dataset + ".mut-exp.smoothed.string.csv"
+        network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filenmae=ofname, network_file=net, reverse=True)
+        
+        net = basevar.network["reactome"]
+        ofname = basevar.smoothed_dir[dataset] + "mut/" + dataset + ".mut.smoothed.reactome.csv"
+        network_smoothing(mut_preproceesed_filename=basevar.mut_data[dataset], output_filename=ofname, network_file=net, alpha=0.7)
+        ofname = basevar.smoothed_dir[dataset] + "mut-exp/" + dataset + ".mut-exp.smoothed.reactome.csv"
+        network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filenmae=ofname, network_file=net, reverse=True)
+        
+        
