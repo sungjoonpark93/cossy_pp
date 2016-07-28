@@ -32,13 +32,31 @@ def replace_normal_sample(preprocessed_df,normal_sample_list):
     return preprocessed_df
 
 
-def match_gene(mut_preprocessed_df=None , exp_preprocessed_df = None):
+def add_exp_only_gene_to_mut(mut_preprocessed_df = None, exp_preprocessed_df=None):
+    '''
+    We have to add exp_only_gene mut having value 0 meaning no somatic mutation
+    '''
+    exp_only_gene = list(set(exp_preprocessed_df.index) -set(mut_preprocessed_df.index))
+    exp_only_gene_df = pd.DataFrame(np.zeros((len(exp_only_gene),len(mut_preprocessed_df.columns))),index=exp_only_gene,columns=mut_preprocessed_df.columns)
+    mut_preprocessed_df = pd.concat([mut_preprocessed_df,exp_only_gene_df],axis=0)
+    return mut_preprocessed_df
+
+
+def match_gene(mut_preprocessed_df=None , exp_preprocessed_df = None,conserve_exp_gene = True):
+    '''
+    conserve_exp_gene means add exp_only to mut having value 0
+    '''
+    if conserve_exp_gene == True:
+        mut_preprocessed_df = add_exp_only_gene_to_mut(mut_preprocessed_df=mut_preprocessed_df, exp_preprocessed_df=exp_preprocessed_df)
     common_gene_list = list(mut_preprocessed_df.index.intersection(exp_preprocessed_df.index))
     return mut_preprocessed_df.loc[common_gene_list,:], exp_preprocessed_df.loc[common_gene_list,:]
 
 
 
-def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_exp = False, exp_preprocessed_df = None):
+def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_exp = False, exp_preprocessed_df = None, conserve_exp_gene=True):
+    '''
+    conserve_exp_gene flag is meaningful only when is_exp is true
+    '''
     def get_overlapped_gene_list(mut_preprocessed_df=None, network_df=None, is_exp=False, exp_preprocessed_df=None):
         if is_exp==False:
             return list(mut_preprocessed_df.index.intersection(network_df.index))
@@ -49,15 +67,14 @@ def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_ex
     if is_exp==False:
         common_gene_list= get_overlapped_gene_list(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=False)
         return mut_preprocessed_df.loc[common_gene_list,:],network_df.loc[common_gene_list,common_gene_list]
+
     elif is_exp==True:
+        if conserve_exp_gene == True:
+            mut_preprocessed_df = add_exp_only_gene_to_mut(mut_preprocessed_df=mut_preprocessed_df,exp_preprocessed_df=exp_preprocessed_df)
         common_gene_list = get_overlapped_gene_list(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=True,exp_preprocessed_df=exp_preprocessed_df)
         return mut_preprocessed_df.loc[common_gene_list,:],network_df.loc[common_gene_list,common_gene_list],exp_preprocessed_df.loc[common_gene_list,:]
 
-def add_exp_only_gene_to_mut(mut_preprocessed_df = None, exp_preprocessed_df=None):
-    exp_only_gene = list(set(exp_preprocessed_df.index) -set(mut_preprocessed_df.index))
-    exp_only_gene_df = pd.DataFrame(np.zeros((len(exp_only_gene),len(mut_preprocessed_df.columns))),index=exp_only_gene,columns=mut_preprocessed_df.columns)
-    mut_preprocessed_df = pd.concat([mut_preprocessed_df,exp_only_gene_df],axis=0)
-    return mut_preprocessed_df
+
 
 def match_sample(mut_preprocessed_df=None,exp_preprocessed_df=None, conserve_exp_normal_sample=False):
     '''
