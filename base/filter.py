@@ -53,6 +53,7 @@ def match_gene(mut_preprocessed_df=None , exp_preprocessed_df = None, conserve_e
 
 
 def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_exp = False, exp_preprocessed_df = None, conserve_exp_gene=True):
+
     '''
     conserve_exp_gene flag is meaningful only when is_exp is true
     '''
@@ -71,6 +72,8 @@ def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_ex
         if conserve_exp_gene == True:
             mut_preprocessed_df = add_exp_only_gene_to_mut(mut_preprocessed_df=mut_preprocessed_df,exp_preprocessed_df=exp_preprocessed_df)
         common_gene_list = get_overlapped_gene_list(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=True,exp_preprocessed_df=exp_preprocessed_df)
+
+
         return mut_preprocessed_df.loc[common_gene_list,:],network_df.loc[common_gene_list,common_gene_list],exp_preprocessed_df.loc[common_gene_list,:]
 
 

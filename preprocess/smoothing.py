@@ -78,7 +78,13 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None, exp_preprocessed_
         n_iter = n_iter + 1
 
         F_t = F.copy(deep=True)
-        F = np.multiply(((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)), patient_exp_df / np.max(np.abs(patient_exp_df), axis=1))
+        print ((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)).shape
+        print patient_exp_df.shape
+        print np.max(np.abs(patient_exp_df), axis=1).shape
+        print (patient_exp_df.T / np.max(np.abs(patient_exp_df), axis=1)).T.shape
+        # get max by index but, when dividing operation meet, it divides by column so one method is to transpose.
+        F = np.multiply(((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)), (patient_exp_df.T / np.max(np.abs(patient_exp_df), axis=1)).T)
+
 
         if np.sum(np.asmatrix(np.square((F - F_t)))) < (1 / 1000000.0):
             print "network smoothing end. ", str(n_iter), "iterations, " , str((time.time() - s_time) / 60.0) , " minutes elapsed\n"
@@ -106,9 +112,9 @@ def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None, exp_prep
     mut_preprocessed_df, exp_preprocessed_df = filter.match_sample(mut_preprocessed_df=mut_preprocessed_df, exp_preprocessed_df=exp_preprocessed_df, conserve_exp_normal_sample=conserve_exp_normal_sample)
     mut_preprocessed_df, network_df, exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df, network_df=network_df, is_exp=True, exp_preprocessed_df=exp_preprocessed_df)
 
+
     patient_mutation_df = mut_preprocessed_df.T
     patient_exp_df = exp_preprocessed_df.T
-
 
     if (patient_mutation_df.shape != patient_exp_df.shape):
         raise Exception("mutation and exp data shape are not matched")
@@ -126,8 +132,8 @@ def network_smoothing_with_exp_at_final(mut_preprocessed_filename=None, exp_prep
             print "network smoothing end. ", str(n_iter), "iterations, " , str((time.time() - s_time) / 60.0) , " minutes elapsed\n"
             break
 
-    F = np.matmul(F, patient_exp_df / np.max(np.abs(patient_exp_df)), axis=1)
-    
+    F = np.multiply(F, (patient_exp_df.T / np.max(np.abs(patient_exp_df),axis=1)).T)
+
     (F.T).to_csv(output_filename)
 
 
