@@ -222,16 +222,10 @@ if __name__ == '__main__':
 
 
     for dataset in basevar.dataset_names:
-        net = basevar.network["string"]
-        ofname = basevar.smoothed_dir[dataset] + "mut/" + dataset + ".mut.smoothed.string.csv"
-        network_smoothing(mut_preproceesed_filename=basevar.mut_data[dataset], output_filename=ofname, network_file=net, alpha=0.7)
-        ofname = basevar.smoothed_dir[dataset] + "mut-exp/" + dataset + ".mut-exp.smoothed.string.csv"
-        network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filenmae=ofname, network_file=net, reverse=True)
-        
-        net = basevar.network["reactome"]
-        ofname = basevar.smoothed_dir[dataset] + "mut/" + dataset + ".mut.smoothed.reactome.csv"
-        network_smoothing(mut_preproceesed_filename=basevar.mut_data[dataset], output_filename=ofname, network_file=net, alpha=0.7)
-        ofname = basevar.smoothed_dir[dataset] + "mut-exp/" + dataset + ".mut-exp.smoothed.reactome.csv"
-        network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filenmae=ofname, network_file=net, reverse=True)
-        
-        
+        for net in basevar.network:
+            print "dataset : ", dataset
+            print "network : ", net
+            print "====="
+            networkfile = basevar.network[net]
+            network_smoothing(mut_preproceesed_filename=basevar.mut_data[dataset], output_filename=basevar.smoothed_mut[net][dataset], network_file=networkfile, alpha=0.7)
+            network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filenmae=basevar.smoothed_mutexp[net][dataset], network_file=net, reverse=True)
