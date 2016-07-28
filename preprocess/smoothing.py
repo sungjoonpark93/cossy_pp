@@ -78,10 +78,7 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None, exp_preprocessed_
         n_iter = n_iter + 1
 
         F_t = F.copy(deep=True)
-        print ((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)).shape
-        print patient_exp_df.shape
-        print np.max(np.abs(patient_exp_df), axis=1).shape
-        print (patient_exp_df.T / np.max(np.abs(patient_exp_df), axis=1)).T.shape
+
         # get max by index but, when dividing operation meet, it divides by column so one method is to transpose.
         F = np.multiply(((alpha * np.matmul(F, network_df)) + ((1 - alpha) * F_0)), (patient_exp_df.T / np.max(np.abs(patient_exp_df), axis=1)).T)
 
