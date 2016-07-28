@@ -4,7 +4,9 @@ Created on 2016. 7. 27.
 @author: sun
 '''
 
-network = {"reactome":"Q:/COSSY+/data/network/reactome/PathwayCommons.8.reactome.BINARY_SIF_DRUG_deleted.hgnc.txt.sif", "string":"Q:/COSSY+/data/network/string/string_fix_excel_problem_tab_seperator.sif"}
+network = {"reactome":"Q:/COSSY+/data/network/reactome/PathwayCommons.8.reactome.BINARY_SIF_DRUG_deleted.hgnc.txt.sif", 
+           "string":"Q:/COSSY+/data/network/string/string_fix_excel_problem_tab_seperator.sif",
+           "kegg":"Q:/COSSY+/data/network/kegg/KEGG_matrix_entrez.sif"}
 
 rootdir = "Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/"
 
@@ -51,18 +53,8 @@ exp_data = {dn:rootdir + dn + "/for_test/exp."+dn+"-US.tsv_preprocessed.csv" for
 
 smoothed_dir = {dn:rootdir + dn + "/for_test/smoothed/" for dn in dataset_names}
 
-#smoothed_mut = {"brca":smoothed_dir["brca"] + "mut/mut.BRCA-US.smoothed.csv",
-#                "coad":smoothed_dir["coad"] + "mut/mut.COAD-US.smoothed.csv",
-#                "lusc":smoothed_dir["lusc"] + "mut/mut.LUSC-US.smoothed.csv",
-#                "prad":smoothed_dir["prad"] + "mut/mut.PRAD-US.smoothed.csv",
-#                "stad":smoothed_dir["stad"] + "mut/mut.STAD-US.smoothed.csv",}
-smoothed_mut = {dn:smoothed_dir[dn] + "mut/mut."+dn+"-US.smoothed.csv" for dn in dataset_names}
+smoothed_mut = {net: {dn:smoothed_dir[dn] + "mut/mut."+dn+"-US.smoothed."+net+".csv" for dn in dataset_names} for net in network}
 
-#smoothed_mutexp = {"brca":smoothed_dir["brca"] + "mutexp/mutexp.BRCA-US.smoothed.csv",
-#                   "coad":smoothed_dir["coad"] + "mutexp/mutexp.COAD-US.smoothed.csv",
-#                   "lusc":smoothed_dir["lusc"] + "mutexp/mutexp.LUSC-US.smoothed.csv",
-#                   "prad":smoothed_dir["prad"] + "mutexp/mutexp.PRAD-US.smoothed.csv",
-#                   "stad":smoothed_dir["stad"] + "mutexp/mutexp.STAD-US.smoothed.csv",}
-smoothed_mutexp = {dn:smoothed_dir[dn] + "mutexp/mutexp."+dn+"-US.smoothed.csv" for dn in dataset_names}
+smoothed_mutexp = {net: {dn:smoothed_dir[dn] + "mutexp/mutexp."+dn+"-US.smoothed."+net+".csv" for dn in dataset_names} for net in network}
 
 
