@@ -52,7 +52,6 @@ def match_gene(mut_preprocessed_df=None , exp_preprocessed_df = None,conserve_ex
     return mut_preprocessed_df.loc[common_gene_list,:], exp_preprocessed_df.loc[common_gene_list,:]
 
 
-
 def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_exp = False, exp_preprocessed_df = None, conserve_exp_gene=True):
     '''
     conserve_exp_gene flag is meaningful only when is_exp is true
