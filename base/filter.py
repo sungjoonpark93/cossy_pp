@@ -23,7 +23,7 @@ def get_tumor_sample_list(preprocessed_df):
 
 def replace_normal_sample(preprocessed_df,normal_sample_list):
     '''
-    replace the normal sample column of preprocessed_df with normal_sample_list having value 0
+    replace the normal sample column of preprocessed_df with input's normal_sample_list having value 0
     '''
     preprocessed_df = preprocessed_df.drop(get_normal_sample_list(preprocessed_df),axis=1)
     data=np.zeros((len(preprocessed_df.index),len(normal_sample_list)))
@@ -35,6 +35,7 @@ def replace_normal_sample(preprocessed_df,normal_sample_list):
 def match_gene(mut_preprocessed_df=None , exp_preprocessed_df = None):
     common_gene_list = list(mut_preprocessed_df.index.intersection(exp_preprocessed_df.index))
     return mut_preprocessed_df.loc[common_gene_list,:], exp_preprocessed_df.loc[common_gene_list,:]
+
 
 
 def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_exp = False, exp_preprocessed_df = None):
@@ -52,6 +53,11 @@ def match_gene_with_network_data(mut_preprocessed_df=None,network_df=None, is_ex
         common_gene_list = get_overlapped_gene_list(mut_preprocessed_df=mut_preprocessed_df,network_df=network_df,is_exp=True,exp_preprocessed_df=exp_preprocessed_df)
         return mut_preprocessed_df.loc[common_gene_list,:],network_df.loc[common_gene_list,common_gene_list],exp_preprocessed_df.loc[common_gene_list,:]
 
+def add_exp_only_gene_to_mut(mut_preprocessed_df = None, exp_preprocessed_df=None):
+    exp_only_gene = list(set(exp_preprocessed_df.index) -set(mut_preprocessed_df.index))
+    exp_only_gene_df = pd.DataFrame(np.zeros((len(exp_only_gene),len(mut_preprocessed_df.columns))),index=exp_only_gene,columns=mut_preprocessed_df.columns)
+    mut_preprocessed_df = pd.concat([mut_preprocessed_df,exp_only_gene_df],axis=0)
+    return mut_preprocessed_df
 
 def match_sample(mut_preprocessed_df=None,exp_preprocessed_df=None, conserve_exp_normal_sample=False):
     '''
