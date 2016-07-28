@@ -6,7 +6,8 @@ Created on 2016. 7. 27.
 
 network = {"reactome":"Q:/COSSY+/data/network/reactome/PathwayCommons.8.reactome.BINARY_SIF_DRUG_deleted.hgnc.txt.sif", 
            "string":"Q:/COSSY+/data/network/string/string_fix_excel_problem_tab_seperator.sif",
-           "kegg":"Q:/COSSY+/data/network/kegg/KEGG_matrix_entrez.sif"}
+           "kegg":"Q:/COSSY+/data/network/kegg/KEGG_matrix_GeneSymbol_0_1.sif"}
+#kegg path modified
 
 rootdir = "Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/"
 
