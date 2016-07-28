@@ -228,4 +228,4 @@ if __name__ == '__main__':
             print "====="
             networkfile = basevar.network[net]
             network_smoothing(mut_preproceesed_filename=basevar.mut_data[dataset], output_filename=basevar.smoothed_mut[net][dataset], network_file=networkfile, alpha=0.7)
-            network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filenmae=basevar.smoothed_mutexp[net][dataset], network_file=net, reverse=True)
+            network_smoothing_with_exp(mut_preprocessed_filename=basevar.mut_data[dataset], exp_preprocessed_filename=basevar.exp_data[dataset], output_filename=basevar.smoothed_mutexp[net][dataset], network_file=networkfile, reverse=True)
