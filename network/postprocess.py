@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 import networkx as nx
+import sys
 
 def make_network_from_geneset(network_file, geneset_file, thr=100):
     df = pd.read_csv(network_file,sep='\t',header=None, names =['Source','Target','Weight'])
@@ -32,3 +33,6 @@ def make_network_from_geneset(network_file, geneset_file, thr=100):
             weight = edge_list[2]['weight']
             w.write(str(source)+"\t"+str(target)+"\t"+str(weight)+"\n")
         w.close()
+
+if __name__ =="__main__":
+    make_network_from_geneset(sys.argv[1], sys.argv[2],sys.argv[3])
