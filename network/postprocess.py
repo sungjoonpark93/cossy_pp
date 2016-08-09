@@ -6,33 +6,15 @@ import os
 import networkx as nx
 import sys
 
-def make_network_from_geneset(network_file, geneset_file, thr=100):
-    df = pd.read_csv(network_file,sep='\t',header=None, names =['Source','Target','Weight'])
-    G = nx.DiGraph()
-    G.add_weighted_edges_from([tuple(x) for x in df.values])
 
-    #construct subgraph
-    subgraph_dict = {}
-    with open(geneset_file,'r') as r:
-        for line in r:
-            cluster_id = int(line.strip().split("\t")[0])
-            node_list = map(lambda x : int(x),line.strip().split("\t")[2:])
-            #reconstruct only geneset size is more than 100
-            if len(node_list)>thr:
-                SG = G.subgraph(node_list)
-                SG_edge_list = SG.edges(data=True)
-                subgraph_dict[cluster_id] = SG_edge_list
+def make_gmt_file(inputfile=None,outputfile=None):
+    w = open(outputfile,'w')
+    with open(inputfile,'r') as r:
+        for i,line_string in enumerate(r):
+            w.write(str(i)+"\t"+"clusterONE"+"\t"+line_string)
+    w.close()
 
-    #output the result
-    for key in subgraph_dict.keys():
-        output_file = os.path.split(geneset_file)[0]+"/"+"cluster_"+str(key)+".txt"
-        w = open(output_file,'w')
-        for edge_list in subgraph_dict[key]:
-            source = int(edge_list[0])
-            target = int(edge_list[1])
-            weight = edge_list[2]['weight']
-            w.write(str(source)+"\t"+str(target)+"\t"+str(weight)+"\n")
-        w.close()
-
-if __name__ =="__main__":
-    make_network_from_geneset(sys.argv[1], sys.argv[2],sys.argv[3])
+if __name__ =='__main__':
+    outputfile = "Q:/COSSY+/source code/COSSY_source_code/data/string_clusterONE_minsize5.gmt"
+    inputfile = "Q:/COSSY+/tools/clusterONE/output/string_clusterONE_minsize5.txt"
+    make_gmt_file(inputfile=inputfile,outputfile=outputfile)
