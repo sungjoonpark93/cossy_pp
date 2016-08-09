@@ -49,4 +49,3 @@ def get_network(network_file):
 
     return filter_network
 
-
