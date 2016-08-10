@@ -176,6 +176,9 @@ if __name__ =='__main__':
             print "network : ", net
             print "====="
             networkfile = basevar.network[net]
-            make_cossy_input(basevar.smoothed_mut[net][dataset])
-            make_cossy_input(basevar.smoothed_mutexp[net][dataset])
-        make_cossy_input(basevar.exp_data[dataset])
+            make_cossy_input(basevar.smoothed_mut[net][dataset],kid_type='kegg')
+            make_cossy_input(basevar.smoothed_mutexp[net][dataset],kid_type='kegg')
+            make_cossy_input(basevar.smoothed_mut[net][dataset],kid_type='string')
+            make_cossy_input(basevar.smoothed_mutexp[net][dataset],kid_type='string')
+        make_cossy_input(basevar.exp_data[dataset],kid_type='string')
+        make_cossy_input(basevar.exp_data[dataset],kid_type='kegg')
