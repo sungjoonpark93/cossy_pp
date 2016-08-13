@@ -15,6 +15,6 @@ def make_gmt_file(inputfile=None,outputfile=None):
     w.close()
 
 if __name__ =='__main__':
-    outputfile = "Q:/COSSY+/source code/COSSY_source_code/data/string_clusterONE.gmt"
-    inputfile = "Q:/COSSY+/tools/clusterONE/output/string_stringid_clusterONE_minsize5.txt"
+    outputfile = "Q:/COSSY+/source code/COSSY_source_code/data/keggWhole_clusterONE.gmt"
+    inputfile = "Q:/COSSY+/tools/clusterONE/output\/keggWhole_clusterONE_minsize5.txt"
     make_gmt_file(inputfile=inputfile,outputfile=outputfile)
