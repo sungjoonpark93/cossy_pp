@@ -15,9 +15,9 @@ def make_maf_for_mutsigcv(inputfile):
     df= df[['Gene Symbol','submitted_sample_id','consequence_type']]
 
     #select only below type of mutation type
-    df = df[df['consequence_type'].isin(['disruptive_inframe_deletion','disruptive_inframe_insertion','frameshift_variant','inframe_deletion','inframe_insertion','missense_variant','stop_gained','exon_variant'])]
-    df = df.replace(['disruptive_inframe_deletion','disruptive_inframe_insertion','frameshift_variant','inframe_deletion','inframe_insertion','missense_variant','stop_gained','exon_variant'],
-               ['In_Frame_Del','In_Frame_Ins','Frame_Shift_Del','In_Frame_Del','In_Frame_Ins','Missense_Mutation','Nonsense_Mutation','RNA'])
+    df = df[df['consequence_type'].isin(['disruptive_inframe_deletion','disruptive_inframe_insertion','inframe_deletion','inframe_insertion','missense_variant','stop_gained','exon_variant','synonymous_variant'])]
+    df = df.replace(['disruptive_inframe_deletion','disruptive_inframe_insertion','inframe_deletion','inframe_insertion','missense_variant','stop_gained','exon_variant','synonymous_variant'],
+             ['In_Frame_Del','In_Frame_Ins','In_Frame_Del','In_Frame_Ins','Missense_Mutation','Nonsense_Mutation','RNA','Silent'])
 
 
     df.columns = [['gene','patient','Variant_Classification']]
