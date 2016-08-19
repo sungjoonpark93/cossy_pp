@@ -3,7 +3,7 @@ __author__ = 'SungJoonPark'
 import pandas as pd
 import os
 
-def make_maf_for_mutsigcv(inputfile):
+def make_maf_for_mutsigcv_from_icgc(inputfile):
     df = pd.read_csv(inputfile,sep='\t',low_memory=False)
     #there is no gene symbol in ICGC mutation file, only Ensemble ID, so wee need to make gene symbol from EnsembleID
     mapping_file = "Q:/COSSY+/data/mapping_file/HGNC_ApprovedSymbol_EnsembleID.txt"
@@ -27,10 +27,14 @@ def make_maf_for_mutsigcv(inputfile):
     return outputfile
 
 
+
+
 if __name__== '__main__':
-    #dataset_name = ['BRCA']
     dataset_name = ['BRCA','COAD','PRAD','LUSC','STAD']
     rootdir = "Q:/COSSY+/tools/hotnet2/mutsigcv/data/maf file/IGCG_TCGA"
     for one_dataset in dataset_name:
         inputfile = rootdir+"/"+one_dataset+"/simple_somatic_mutation.open."+one_dataset+"-US.tsv"
-        make_maf_for_mutsigcv(inputfile)
+        make_maf_for_mutsigcv_from_icgc(inputfile)
+
+
+

@@ -15,5 +15,5 @@ __author__ = 'SungJoonPark'
 #
 # edge_df.to_csv(output_file,header=False,index=False,sep='/t')
 
-import os
-print os.path.splitext("Q:/COSSY+/tools/hotnet2/mutsigcv/data/IGCG_TCGA/BRCA/simple_somatic_mutation.open.BRCA-US.tsv")[0]
+tempfile = "Q:/COSSY+/tools/hotnet2/hotnet2-master\influence_matrices/string/string_ppr_0.4.h5"
+print tempfile.lower().endswith('h5')
