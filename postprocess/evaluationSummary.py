@@ -5,11 +5,14 @@ Created on 2016. 8. 18.
 '''
 
 from postprocess.annotationScore import getAllDescendantFiles
+from gorillaImpl import GOrilla
+
 import numpy as np
 
 if __name__ == '__main__':
     summarydir = "Q:/COSSY+/misResultCSVOnly/ICGC_TCGA/gprofile/"
     
+   
     datasets = ["BRCA", "COAD", "LUSC", "PRAD", "STAD"]
     
     for dataset in datasets:
