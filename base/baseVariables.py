@@ -30,6 +30,7 @@ mut_src_data = {dn : rootdir + dn + "/patient_not_matched/mut/simple_somatic_mut
 
 exp_src_data = {dn:rootdir + dn +"/patient_not_matched/exp/exp_seq." + dn + "-US.tsv_preprocessed.csv" for dn in dataset_names}
 
+
 #mut_data = {"brca":rootdir + "BRCA/for_test/mut.BRCA-US.tsv_preprocessed.csv",
 #            "coad":rootdir + "COAD/for_test/mut.COAD-US.tsv_preprocessed.csv",
 #            "lusc":rootdir + "LUSC/for_test/mut.LUSC-US.tsv_preprocessed.csv",
@@ -46,6 +47,9 @@ mut_data = {dn:rootdir + dn + "/for_test/mut."+dn+"-US.tsv_preprocessed.csv" for
 
 exp_data = {dn:rootdir + dn + "/for_test/exp."+dn+"-US.tsv_preprocessed.csv" for dn in dataset_names}
 
+exp_gct_data = {dn:rootdir + dn + "/for_test/exp."+dn+"-US.tsv_preprocessed.gct" for dn in dataset_names}
+exp_cls_data = {dn:rootdir + dn + "/for_test/exp."+dn+"-US.tsv_preprocessed.cls" for dn in dataset_names}
+
 #smoothed_dir = {"brca":rootdir + "BRCA/for_test/smoothed/",
 #                "coad":rootdir + "COAD/for_test/smoothed/",
 #                "lusc":rootdir + "LUSC/for_test/smoothed/",
@@ -59,3 +63,6 @@ smoothed_mut = {net: {dn:smoothed_dir[dn] + "mut/mut."+dn+"-US.smoothed."+net+".
 smoothed_mutexp = {net: {dn:smoothed_dir[dn] + "mutexp/mutexp."+dn+"-US.smoothed."+net+".csv" for dn in dataset_names} for net in network}
 
 
+
+gmt_dir = "Q:/COSSY+/source code/COSSY_source_code/data/"
+gmt = {'string':gmt_dir+'string.gmt','kegg':gmt_dir+'kegg.gmt'}

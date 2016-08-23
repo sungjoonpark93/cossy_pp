@@ -4,6 +4,8 @@ import os
 import pandas as pd
 
 from base import filter
+import base.baseVariables as basevar
+
 
 
 def make_gct_file(df,output_filename=None):
@@ -90,32 +92,30 @@ def make_cossy_input(preproceed_filename,kid_type='kegg'):
 if __name__ =='__main__':
     pass
     #exp
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Breast Cancer/patient_matched/exp/exp_seq.BRCA-US.tsv_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Colon Adenocarcinoma/patient_matched/exp/exp_seq.COAD-US.tsv_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Gastric Adenocarcinoma/patient_matched/exp/exp_seq.STAD-US.tsv_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Lung Squamous Cell Carcinoma/patient_matched/exp/exp_seq.LUSC-US.tsv_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Prostate Adenocarcinoma/patient_matched/exp/exp_seq.PRAD-US.tsv_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-
-
-    #mut
-
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Breast Cancer/patient_matched/mut/simple_somatic_mutation.open.BRCA-US.tsv_smoothing_string_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Colon Adenocarcinoma/patient_matched/mut/simple_somatic_mutation.open.COAD-US.tsv_smoothing_string_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Gastric Adenocarcinoma/patient_matched/mut/simple_somatic_mutation.open.STAD-US.tsv_smoothing_string_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Lung Squamous Cell Carcinoma/patient_matched/mut/simple_somatic_mutation.open.LUSC-US.tsv_smoothing_string_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-    preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Prostate Adenocarcinoma/patient_matched/mut/simple_somatic_mutation.open.PRAD-US.tsv_smoothing_string_preprocessed.csv"
-    make_cossy_input(preprocessed_filename)
-
-
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Breast Cancer/patient_matched/exp/exp_seq.BRCA-US.tsv_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Colon Adenocarcinoma/patient_matched/exp/exp_seq.COAD-US.tsv_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Gastric Adenocarcinoma/patient_matched/exp/exp_seq.STAD-US.tsv_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Lung Squamous Cell Carcinoma/patient_matched/exp/exp_seq.LUSC-US.tsv_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Prostate Adenocarcinoma/patient_matched/exp/exp_seq.PRAD-US.tsv_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    #
+    #
+    # #mut
+    #
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Breast Cancer/patient_matched/mut/simple_somatic_mutation.open.BRCA-US.tsv_smoothing_string_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Colon Adenocarcinoma/patient_matched/mut/simple_somatic_mutation.open.COAD-US.tsv_smoothing_string_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Gastric Adenocarcinoma/patient_matched/mut/simple_somatic_mutation.open.STAD-US.tsv_smoothing_string_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Lung Squamous Cell Carcinoma/patient_matched/mut/simple_somatic_mutation.open.LUSC-US.tsv_smoothing_string_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
+    # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Prostate Adenocarcinoma/patient_matched/mut/simple_somatic_mutation.open.PRAD-US.tsv_smoothing_string_preprocessed.csv"
+    # make_cossy_input(preprocessed_filename)
 
 
     #mut with exp(reverse False)
@@ -169,3 +169,16 @@ if __name__ =='__main__':
     # make_cossy_input(preprocessed_filename)
     # preprocessed_filename ="Q:/COSSY+/data/preprocessed/TCGA/ICGC/release21/Prostate Adenocarcinoma/mut_with_exp/PRAD_mut_with_exp_seq_reversed_alpha0.7_string.csv"
     # make_cossy_input(preprocessed_filename)
+
+    for dataset in basevar.dataset_names:
+        for net in basevar.network:
+            print "dataset : ", dataset
+            print "network : ", net
+            print "====="
+            networkfile = basevar.network[net]
+            make_cossy_input(basevar.smoothed_mut[net][dataset],kid_type='kegg')
+            make_cossy_input(basevar.smoothed_mutexp[net][dataset],kid_type='kegg')
+            make_cossy_input(basevar.smoothed_mut[net][dataset],kid_type='string')
+            make_cossy_input(basevar.smoothed_mutexp[net][dataset],kid_type='string')
+        make_cossy_input(basevar.exp_data[dataset],kid_type='string')
+        make_cossy_input(basevar.exp_data[dataset],kid_type='kegg')

@@ -7,6 +7,17 @@ import numpy as np
 #preprocessing TCGA data came from ICGC
 #preprocessed df means gene x patient dataframe.
 
+def get_gene_named_added_icgc_mut_df(input_filename):
+    df = pd.read_csv(input_filename,sep='\t',low_memory=False)
+    #there is no gene symbol in ICGC mutation file, only Ensemble ID, so wee need to make gene symbol from EnsembleID
+    mapping_file = "Q:/COSSY+/data/mapping_file/HGNC_ApprovedSymbol_EnsembleID.txt"
+    map_df = pd.read_csv(mapping_file,sep='\t')
+    map_dict = map_df.set_index('Ensembl ID(supplied by Ensembl)')['Approved Symbol'].to_dict()
+    #filter the ensemble id into the one in the mapping file.
+    df = df[df['gene_affected'].isin(map_dict.keys())]
+    df['Gene Symbol'] = [map_dict[ensemble_id] for ensemble_id in df['gene_affected']]
+    return df
+
 
 
 def preprocess_exp(input_filename=None,output_filename=None,exp_type='seq'):
