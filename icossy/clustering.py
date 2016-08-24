@@ -97,7 +97,7 @@ if __name__ == "__main__":
     
     result = []
     result.append( [{"positive":[x[2] for x in pairList if x[0] == clab and x[1] == 1], 
-                                "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabs)] )
+                     "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabs)] )
     
     print result
     
