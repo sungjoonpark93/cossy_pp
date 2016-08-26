@@ -56,39 +56,6 @@ def load_mutation_data(mutation_file):
     return mut_df
 
 
-
-def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_for_smoothing=None ,type=None):
-    #exp file is gct file, mutation_file is preprocessed file
-
-    print "loading data"
-
-    mis_dict = load_gmt_file(gmt_file)
-
-    if type=='expression':
-        exp_df = load_exp_data(exp_file, type='gct')
-        profile = get_profile(exp_df=exp_df)
-        profileData = {'profile':profile, 'classes': basefilter.get_sample_classes_and_lables(profile)['classes'], 'labels': basefilter.get_sample_classes_and_lables(profile)['labels']}
-        return {'profileData':profileData ,'misList':mis_dict}
-
-    elif type =='mutation':
-        mut_df = load_mutation_data(mutation_file)
-        network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
-        profile = get_profile(mut_df = mut_df ,network_df_for_smoothing=network_df_for_smoothing,type='mut')
-        profileData = {'profile':profile, 'classes': basefilter.get_sample_classes_and_lables(profile)['classes'], 'labels': basefilter.get_sample_classes_and_lables(profile)['labels']}
-        return {'profileData':profileData ,'misList':mis_dict}
-
-    elif type =='mut_with_exp':
-        mut_df = load_mutation_data(mutation_file)
-        exp_df = load_exp_data(exp_file, type='gct')
-        network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
-        profile = get_profile(mut_df=mut_df , exp_df=exp_df , network_df_for_smoothing=network_df_for_smoothing , type='mut_with_exp')
-        profileData = {'profile':profile, 'classes': basefilter.get_sample_classes_and_lables(profile)['classes'], 'labels': basefilter.get_sample_classes_and_lables(profile)['labels']}
-        return {'profileData':profileData ,'misList':mis_dict}
-
-    else:
-        print "type is not specified "
-
-
 def get_profile(mut_df=None, exp_df=None, network_df_for_smoothing = None, type='exp'):
     if type=='exp':
         profile = exp_df
@@ -98,6 +65,44 @@ def get_profile(mut_df=None, exp_df=None, network_df_for_smoothing = None, type=
     elif type== 'mut_with_exp':
         profile = smoothing.smoothing(mut_df=mut_df,exp_df=exp_df,network_df=network_df_for_smoothing,type='mut_with_exp',conserve_exp_normal_sample=True)
     return profile
+
+
+def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_for_smoothing=None ,analyzing_type=None , exp_normalize_tpye='no'):
+    #exp file is gct file, mutation_file is preprocessed file
+
+    print "loading data"
+
+
+    if analyzing_type=='expression':
+        print "your analyzing with expression data"
+        exp_df = load_exp_data(exp_file, type='gct')
+        profile = get_profile(exp_df=exp_df)
+
+    elif analyzing_type =='mutation':
+        print "your analyzing with mutation data"
+        mut_df = load_mutation_data(mutation_file)
+        network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
+        profile = get_profile(mut_df = mut_df ,network_df_for_smoothing=network_df_for_smoothing,type='mut')
+
+    elif analyzing_type =='mut_with_exp':
+        print "your analyzing with mutation data and expression data"
+        mut_df = load_mutation_data(mutation_file)
+        exp_df = load_exp_data(exp_file, type='gct')
+        network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
+        profile = get_profile(mut_df=mut_df , exp_df=exp_df , network_df_for_smoothing=network_df_for_smoothing , type='mut_with_exp')
+
+    #gene expression normalization
+    if analyzing_type=='expression' or analyzing_type =='mut_with_exp':
+        pass
+        #profile = normalize_exp_data(profile , type=exp_normalize_tpye)
+
+    else:
+        raise Exception("type is not specified ")
+
+    mis_dict = load_gmt_file(gmt_file)
+
+    profileData = {'profile':profile, 'classes': basefilter.get_sample_classes_and_lables(profile)['classes'], 'labels': basefilter.get_sample_classes_and_lables(profile)['labels']}
+    return {'profileData':profileData ,'misList':mis_dict}
 
 
 if __name__ =='__main__':
