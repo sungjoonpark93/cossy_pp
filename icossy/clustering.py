@@ -11,6 +11,8 @@ from pandas.core.frame import DataFrame
 from operator import itemgetter
 from sklearn.cluster.hierarchical import AgglomerativeClustering
 
+import numpy as np
+
 def ttestRepFunc(data):
     
     tf = data["profile"]
@@ -64,11 +66,13 @@ def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
         clusteringResult = clustering.fit(X=datasubset)
         clusterLabels = clusteringResult.labels_
         
+        
+        
         pairList = zip(clusterLabels, data["classes"], data["profile"].feature_names)
         
         result.append( {misid:[{"positive":[x[2] for x in pairList if x[0] == clab and x[1] == 1], 
                                 "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabels)] } )
-    
+        
     return result
 
 
@@ -97,6 +101,10 @@ if __name__ == "__main__":
     print repgenes
     
     print profileData["profile"].ix[misList["mis1"]].T
+    
+    me = np.mean(profileData["profile"].ix[misList["mis1"]].T)
+    
+    print me, type(me) 
     
     clusterLabs = [1,3,1,2,2,2,2,3,1,3]
     
