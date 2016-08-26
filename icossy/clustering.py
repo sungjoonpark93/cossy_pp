@@ -67,12 +67,28 @@ def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
         clusterLabels = clusteringResult.labels_
         
         
+        tripleList = zip(clusterLabels, data["classes"], data["profile"].feature_names)
         
-        pairList = zip(clusterLabels, data["classes"], data["profile"].feature_names)
         
-        result.append( {misid:[{"positive":[x[2] for x in pairList if x[0] == clab and x[1] == 1], 
-                                "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabels)] } )
+        result = {cid:{"positive":[], "negative":[]} for cid in set(clusterLabs)}
+    
+        for triple in tripleList:
+            if triple[1] == 1:
+                result[triple[0]]["positive"].append(triple[2])
+            else: 
+                result[triple[0]]["negative"].append(triple[2])
         
+        for cid in result:
+            cluster = result[cid]
+            patients = cluster['positive'] + cluster['negative']
+            centroid = np.array(np.mean(data["profile"][patients].T))
+            
+            result[cid]['centroid'] = centroid
+        '''
+        result.append( {misid:[{"positive":[x[2] for x in tripleList if x[0] == clab and x[1] == 1], 
+                                "negative":[x[2] for x in tripleList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabels)] } )
+        '''
+                
     return result
 
 
@@ -108,12 +124,28 @@ if __name__ == "__main__":
     
     clusterLabs = [1,3,1,2,2,2,2,3,1,3]
     
-    pairList = zip(clusterLabs, profileData["classes"], tmppatients)
+    tripleList = zip(clusterLabs, profileData["classes"], tmppatients)
     
+    result = {cid:{"positive":[], "negative":[]} for cid in set(clusterLabs)}
+    
+    for triple in tripleList:
+        if triple[1] == 1:
+            result[triple[0]]["positive"].append(triple[2])
+        else: 
+            result[triple[0]]["negative"].append(triple[2])
+    
+    print
+    for cid in result:
+        cluster = result[cid]
+        patients = cluster['positive'] + cluster['negative']
+        centroid = np.array(np.mean(profileData["profile"][patients].T))
+        print centroid
+           
+    '''
     result = []
-    result.append( [{"positive":[x[2] for x in pairList if x[0] == clab and x[1] == 1], 
-                     "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabs)] )
-    
+    result.append( [{"positive":[x[2] for x in tripleList if x[0] == clab and x[1] == 1], 
+                     "negative":[x[2] for x in tripleList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabs)] )
+    '''
     print result
     
     '''
