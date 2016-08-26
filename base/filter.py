@@ -12,7 +12,6 @@ def order_sample(df):
     tumor_normal_divide_index = len(tumor_sample_list)
     return ordered_df,tumor_normal_divide_index
 
-  
 def get_normal_sample_list(preprocessed_df):
     normal_sample_list = [sample for sample in preprocessed_df.columns if int(sample[13:15]) >= 10]
     return normal_sample_list
@@ -20,6 +19,19 @@ def get_normal_sample_list(preprocessed_df):
 def get_tumor_sample_list(preprocessed_df):
     tumor_sample_list = [sample for sample in preprocessed_df.columns if int(sample[13:15]) < 10]
     return tumor_sample_list
+
+def get_sample_list(preprocessed_df):
+    sample_list =[sample for sample in preprocessed_df.columns]
+    return sample_list
+
+def get_sample_classes_and_lables(preprocessed_df):
+    #conver sample list into classes and labels in which classes is [1,0,0] and lables is [tumor, normal]
+    sample_list = get_sample_list(preprocessed_df)
+    sample_label_list = ['normal' if int(sample[13:15])>=10 else "tumor" for sample in sample_list]
+    labels = tuple(list(set(sample_label_list)))
+    classes = [{labels[0]:1,labels[1]:0}[label] for label in sample_label_list]
+    return {'classes':classes,'labels':labels}
+
 
 def replace_normal_sample(preprocessed_df,normal_sample_list):
     '''
