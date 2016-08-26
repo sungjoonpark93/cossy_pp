@@ -40,18 +40,25 @@ def representativeScore(data, scoreFunc="ttest"):
     return [x[0] for x in repGeneList]
 
 
-def clusteringInMIS(data, clusterNum, topKgene, misList):
+def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
     
     result = []
     
     clustering = AgglomerativeClustering(n_clusters=clusterNum)
     
+    ranked = representativeScore(data, method)
+    
     for misid in misList:
         misgene = misList[misid]
         
+        '''
         representativeGenes = []
+        
         for i in range(topKgene):
             representativeGenes.append(misgene[i])
+        '''
+        
+        representativeGenes = [x for x in ranked if x in misgene][0:topKgene]
         
         datasubset = data["profile"].ix[representativeGenes].T
         clusteringResult = clustering.fit(X=datasubset)
