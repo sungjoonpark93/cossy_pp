@@ -7,10 +7,8 @@ Created on 2016. 8. 25.
 from dataload import load_data
 import clustering as cl
 
-
 class cossyPlus():
     def __init__(self):
-        
         pass
     
     def loadData(self, data):
