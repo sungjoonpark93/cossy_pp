@@ -26,10 +26,10 @@ class cossyPlus():
         self.run()
 
     def run(self):
-        dataload_result = self.loadData()
-        clustering_result = self.clustering(dataload_result)
-        entropy_result = self.misranking(clustering_result)
-        return entropy_result
+        self.dataload_result = self.loadData()
+        self.clustering_result = self.clustering(self.dataload_result)
+        self.entropy_result = self.misranking(self.clustering_result)
+        return self.entropy_result
 
     def loadData(self):
         print "start loading data.."
@@ -53,9 +53,23 @@ class cossyPlus():
         return mr.computeEntropy(clusternig_result)
     
     # classification
-    def fit(self):
+    def fit(self, data):
         
-        pass
+        fittingResult = {}
+        classification = cl.classify(data, self.clustering_result)
+        
+        for pid in classification:
+            patient = classification[pid]
+            cls = {0:0, 1:0}
+            for misid in patient:
+                cls[ int(patient[misid][1] + 0.5) ] += 1
+            
+            if cls[0] > cls[1]:
+                fittingResult[pid] = 0
+            else:
+                fittingResult[pid] = 1
+        
+        return fittingResult
     
     # making classification model
     def makeModel(self):
