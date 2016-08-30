@@ -6,7 +6,7 @@ import os
 import network.preprocess as network_preprocess
 import preprocess.smoothing_for_icossy as smoothing
 import base.filter as basefilter
-
+import normalization
 
 def load_gmt_file(gmt_file):
     print "loading gmt file"
@@ -67,7 +67,7 @@ def get_profile(mut_df=None, exp_df=None, network_df_for_smoothing = None, type=
     return profile
 
 
-def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_for_smoothing=None ,analyzing_type=None , exp_normalize_tpye='no'):
+def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_for_smoothing=None ,analyzing_type=None , exp_normalize_tpye='fuzzy'):
     #exp file is gct file, mutation_file is preprocessed file
 
     print "loading data"
@@ -91,10 +91,13 @@ def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_f
         network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
         profile = get_profile(mut_df=mut_df , exp_df=exp_df , network_df_for_smoothing=network_df_for_smoothing , type='mut_with_exp')
 
+    else:
+        raise Exception('unspecified analyzing_type')
+
     #gene expression normalization
     if analyzing_type=='expression' or analyzing_type =='mut_with_exp':
-        pass
-        #profile = normalize_exp_data(profile , type=exp_normalize_tpye)
+        print "gene expressionnormalization with " + exp_normalize_tpye
+        profile = normalization.normalize_exp_data(profile , type=exp_normalize_tpye)
 
     else:
         raise Exception("type is not specified ")
@@ -111,4 +114,4 @@ if __name__ =='__main__':
     temp_gmt_file = basevar.gmt['kegg']
     temp_mutation_file = basevar.mut_data['BRCA']
     temp_network_for_smoothing_file = basevar.network['kegg']
-    print load_data(mutation_file=temp_mutation_file , gmt_file=temp_gmt_file ,network_file_for_smoothing=temp_network_for_smoothing_file,type='mutation')
+    print load_data(exp_file=temp_gct_file, mutation_file=temp_mutation_file , gmt_file=temp_gmt_file ,network_file_for_smoothing=temp_network_for_smoothing_file,analyzing_type='expression')
