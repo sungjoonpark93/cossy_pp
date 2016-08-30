@@ -13,6 +13,7 @@ from sklearn.cluster.hierarchical import AgglomerativeClustering
 
 import numpy as np
 from scipy.spatial.distance import euclidean
+import pandas
 
 def ttestRepFunc(data):
     
@@ -171,3 +172,53 @@ if __name__ == "__main__":
     classes = classify(data=test, clustering=result)
     
     pp.pprint(classes)
+    
+    import random
+    
+    f=5
+    
+    folds = [[] for x in range(f)]
+    profile = profileData["profile"]
+    classes = profileData["classes"]
+        
+    pairlist = [ (classes[x], profile.columns[x]) for x in range(len(classes))]
+    random.shuffle(pairlist)
+
+    pospairs = enumerate([ x for x in pairlist if x[0] == 1])
+    negpairs = enumerate([ x for x in pairlist if x[0] == 0])
+    
+    
+    for idx, v in pospairs:
+        i = idx%f
+        folds[i].append(v)
+    
+    for idx, v in negpairs:
+        i = f - idx%f -1
+        folds[i].append(v)
+    
+    foldedData = []
+    
+    for fold in folds:
+        pids = [x[1] for x in fold]
+        classes = [x[0] for x in fold]
+        
+        profileSubset = profile[pids]
+        
+        foldedData.append({"profile":profileSubset, "classes":classes, "labels":profileData["labels"]})
+    
+    print
+    pp.pprint(pairlist)
+    print
+    pp.pprint(folds)
+    print " -------------------- "
+    pp.pprint(foldedData)
+    
+    print 
+    print
+    
+    idxs = [0,1,2]
+#    new = {"profile":pandas.concat([foldedData[x]["profile"] for x in idxs], axis=1), "classes": , "labels":foldedData[idx[0]]["labels"]}
+    
+#    pp.pprint(new)
+    
+    
