@@ -111,7 +111,7 @@ def classify(data, clustering, dist="euclidean"):
     print 
     print 
     for pid in data:
-        
+        classificationList[pid] = {}
         onerec = data[pid]
         for misid in clustering:
             clusters = clustering[misid]['c']
@@ -119,11 +119,11 @@ def classify(data, clustering, dist="euclidean"):
             
             datasubset = onerec.ix[repgenes].T
             
-            distances = [(cid, dist(datasubset, clusters[cid]['centroid'])) for cid in clusters]
+            distances = [(cid, clusters[cid]['label'], dist(datasubset, clusters[cid]['centroid'])) for cid in clusters]
             
-            closestcid = min(distances, key=itemgetter(1))
+            closestcid = min(distances, key=itemgetter(2))
             
-            classificationList[misid] = closestcid
+            classificationList[pid][misid] = closestcid
     
     return classificationList
 
@@ -165,9 +165,9 @@ if __name__ == "__main__":
 
     pp.pprint(result)
     
-    test = profileData['profile'][['p1']]
+    test = profileData['profile'][['p1','p11']]
     print test
     
     classes = classify(data=test, clustering=result)
     
-    print classes
+    pp.pprint(classes)
