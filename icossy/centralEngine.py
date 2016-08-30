@@ -4,7 +4,7 @@ Created on 2016. 8. 25.
 @author: sun
 '''
 
-from dataload import load_data
+import dataload as dl
 import clustering as cl
 import misranking as mr
 
@@ -15,6 +15,8 @@ class cossyPlus():
         self.representativeGene_num = param.representativeGene_num
         self.clustering_method = param.clustering_method
         self.exp_normalization_type = param.exp_normalization_type
+        self.is_loading_class_file =param.is_loading_class_file
+        self.do_tenFold = param.do_tenFold
 
         self.exp_file = param.exp_file
         self.mutation_file = param.mutation_file
@@ -22,24 +24,28 @@ class cossyPlus():
 
         self.gmt_file = param.gmt_file
 
+        self.misReulst_file = param.misResult_file
 
         self.run()
 
     def run(self):
         self.dataload_result = self.loadData()
+        self.misList = self.dataload_result['misList']
         self.clustering_result = self.clustering(self.dataload_result)
         self.entropy_result = self.misranking(self.clustering_result)
+        self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
         return self.entropy_result
+
 
     def loadData(self):
         print "start loading data.."
 
         if self.analyze_type =='expression':
-            dataload_result = self.loadData(exp_file=self.exp_file,  gmt_file=self.gmt_file, analyzing_type=self.analyze_type , exp_normalize_tpye= self.exp_normalization_type)
+            dataload_result = dl.load_data(exp_file=self.exp_file,  gmt_file=self.gmt_file, analyzing_type=self.analyze_type , exp_normalize_tpye= self.exp_normalization_type)
         elif self.analyze_type =='mutation':
-            dataload_result = self.loadData(mutation_file =self.mutation_file , gmt_file=self.gmt_file, analyzing_type=self.analyze_type , network_file_for_smoothing=self.smoothing_source_file)
+            dataload_result = dl.load_data(mutation_file =self.mutation_file , gmt_file=self.gmt_file, analyzing_type=self.analyze_type , network_file_for_smoothing=self.smoothing_source_file)
         elif self.analyze_type =='mut_with_exp':
-            dataload_result = self.loadData(exp_file=self.exp_file, mutation_file =self.mutation_file , gmt_file=self.gmt_file, analyzing_type=self.analyze_type , network_file_for_smoothing=self.smoothing_source_file , exp_normalize_tpye= self.exp_normalization_type)
+            dataload_result = dl.load_data(exp_file=self.exp_file, mutation_file =self.mutation_file , gmt_file=self.gmt_file, analyzing_type=self.analyze_type , network_file_for_smoothing=self.smoothing_source_file , exp_normalize_tpye= self.exp_normalization_type)
         else:
             raise Exception('unspecified analyzing type')
         return dataload_result
@@ -76,6 +82,24 @@ class cossyPlus():
         
         pass
     
-    
+    def write_misResult_from_entropyResult(self,entropy_result, outputfile, misList):
+        if outputfile == None:
+            raise Exception("you didn't specified the outputfile")
+
+        w = open(outputfile,'w')
+        for misid_result_tuple in entropy_result:
+
+            misid = misid_result_tuple[0]
+            entropy = misid_result_tuple[1]
+            mis_genes = misList[misid]
+
+            w.write(misid+"\t"+str(entropy)+"\t")
+            for mis_gene in mis_genes:
+                w.write(mis_gene)
+                w.write("\t")
+            w.write("\n")
+        w.close()
+
+
 if __name__ == "__main__":
-    print "start"
+    pass
