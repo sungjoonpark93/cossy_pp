@@ -12,6 +12,7 @@ from operator import itemgetter
 from sklearn.cluster.hierarchical import AgglomerativeClustering
 
 import numpy as np
+from scipy.spatial.distance import euclidean
 
 def ttestRepFunc(data):
     
@@ -44,7 +45,7 @@ def representativeScore(data, scoreFunc="ttest"):
 
 def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
     
-    result = []
+    result = {}
     
     clustering = AgglomerativeClustering(n_clusters=clusterNum)
     
@@ -66,18 +67,69 @@ def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
         clusteringResult = clustering.fit(X=datasubset)
         clusterLabels = clusteringResult.labels_
         
+        tripleList = zip(clusterLabels, data["classes"], data["profile"].columns.values.tolist())
         
         
-        pairList = zip(clusterLabels, data["classes"], data["profile"].feature_names)
+        result[misid] = {'c':{cid:{"positive":[], "negative":[]} for cid in set(clusterLabels)}, 'repGenes':representativeGenes}
         
-        result.append( {misid:[{"positive":[x[2] for x in pairList if x[0] == clab and x[1] == 1], 
-                                "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabels)] } )
+        for triple in tripleList:
+            
+            if triple[1] == 1:
+                result[misid]['c'][triple[0]]["positive"].append(triple[2])
+            else: 
+                result[misid]['c'][triple[0]]["negative"].append(triple[2])
         
+        for cid in result[misid]['c']:
+            cluster = result[misid]['c'][cid]
+            patients = cluster['positive'] + cluster['negative']
+            
+            centroid = np.array(np.mean(datasubset.T[patients].T))
+            
+            result[misid]['c'][cid]['centroid'] = centroid
+            result[misid]['c'][cid]['label'] = float(len(result[misid]['c'][cid]['positive'])) / float(len(result[misid]['c'][cid]['positive']) + len(result[misid]['c'][cid]['negative']))
+        '''
+        result.append( {misid:[{"positive":[x[2] for x in tripleList if x[0] == clab and x[1] == 1], 
+                                "negative":[x[2] for x in tripleList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabels)] } )
+        '''
+                
     return result
 
-
+def classify(data, clustering, dist="euclidean"):
+    
+    if type(data) != "":
+        print "data should be type of DataFrame!"
+        print "please check the type"
+        
+    classification = {}
+    
+    if dist == "euclidean":
+        dist = euclidean
+    
+    classificationList = {}
+    
+    
+    print 
+    print 
+    for pid in data:
+        
+        onerec = data[pid]
+        for misid in clustering:
+            clusters = clustering[misid]['c']
+            repgenes = clustering[misid]['repGenes']
+            
+            datasubset = onerec.ix[repgenes].T
+            
+            distances = [(cid, dist(datasubset, clusters[cid]['centroid'])) for cid in clusters]
+            
+            closestcid = min(distances, key=itemgetter(1))
+            
+            classificationList[misid] = closestcid
+    
+    return classificationList
 
 if __name__ == "__main__":
+    
+    import pprint
     
     tmpframe = [ [0.9, 0.9, 0.9, 0.8, 0.9, 0.8, 0.9, 0.0, 0.0, 0.1, 0.0, 0.1, 0.2 ],
                  [0.8, 0.7, 0.6, 0.6, 0.7, 0.4, 0.5, 0.3, 0.1, 0.2, 0.1, 0.1, 0.2 ],
@@ -96,6 +148,7 @@ if __name__ == "__main__":
 
     misList = {"mis1":["g1", "g3", "g4"], "mis2":["g2", "g5", "g8", "g9"], "mis3":["g6", "g7", "g10"]}
     
+    pp = pprint.PrettyPrinter()
     
     repgenes = representativeScore(profileData)
     print repgenes
@@ -108,26 +161,13 @@ if __name__ == "__main__":
     
     clusterLabs = [1,3,1,2,2,2,2,3,1,3]
     
-    pairList = zip(clusterLabs, profileData["classes"], tmppatients)
+    result = clusteringInMIS(data=profileData, clusterNum=3, topKgene=3, misList=misList)
+
+    pp.pprint(result)
     
-    result = []
-    result.append( [{"positive":[x[2] for x in pairList if x[0] == clab and x[1] == 1], 
-                     "negative":[x[2] for x in pairList if x[0] == clab and x[1] == 0] } for clab in set(clusterLabs)] )
+    test = profileData['profile'][['p1']]
+    print test
     
-    print result
+    classes = classify(data=test, clustering=result)
     
-    '''
-    dataset = datasets.load_iris()
-    x = dataset.data
-    y = dataset.target_names
-    
-    print y
-    print dataset.feature_names
-    frame = DataFrame(data=x, columns=dataset.feature_names)
-    
-#    km = KMeans(n_clusters=3, random_state=1).fit(frame[['sepal width (cm)', 'petal length (cm)']])
-    km = AgglomerativeClustering(n_clusters=3).fit(frame[['sepal width (cm)', 'petal length (cm)']])
-    
-    print km
-    print km.labels_
-    '''
+    print classes
