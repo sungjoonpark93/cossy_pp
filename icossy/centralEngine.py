@@ -10,12 +10,15 @@ import misranking as mr
 import random
 import pandas as pd
 import parameter
+from pandas.util.testing import makeFloatIndex
+from operator import itemgetter
 
 class cossyPlus():
     def __init__(self,param):
         self.analyze_type = param.analyze_type
         self.cluster_num = param.cluster_num
         self.representativeGene_num = param.representativeGene_num
+        self.mis_num = param.mis_num
         self.clustering_method = param.clustering_method
         self.exp_normalization_type = param.exp_normalization_type
         self.is_loading_class_file =param.is_loading_class_file
@@ -35,14 +38,46 @@ class cossyPlus():
         if enhancedRobustness == False:
             self.dataload_result = self.loadData()
             self.misList = self.dataload_result['misList']
-            self.clustering_result = self.clustering(self.dataload_result)
+            self.clustering_result = self.clustering()
             self.entropy_result = self.misranking(self.clustering_result)
             self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
         else:
             self.dataload_result = self.loadData()
+            allMISList = self.dataload_result['misList']
             
+            numOfFolds = 10
+            foldData = self.makeFolds(self.dataload_result['profileData'], numOfFolds)
             
-            pass
+            robustMisList = []
+            
+            for foldID in range(numOfFolds):
+                
+                curFoldIdx = range(numOfFolds)
+                curFoldIdx.remove(foldID)
+                
+                curFold = self.merged(foldData, curFoldIdx)
+                inData = {"profileData" : curFold, "misList":allMISList}
+                
+                curClustering_result = self.clustering(inData)
+                curEntropy_result = self.misranking(curClustering_result)
+#                self.write_misResult_from_entropyResult(curEntropy_result, self.misReulst_file, self.misList)
+                
+                robustMisList.append(curEntropy_result)
+            
+            candidateMISwithEntropy = reduce(lambda x, y : x + y, robustMisList)
+    
+            cnadidateMISids = [x[0] for x in candidateMISwithEntropy]
+            miscounts = [(misid, cnadidateMISids.count(misid)) for misid in set(cnadidateMISids)]
+            miscounts.sort(key=itemgetter(1), reverse=True)
+            
+            finalMISList = [x[0] for x in miscounts[0:self.mis_num]]
+            
+            self.misList = {x : allMISList[x] for x in allMISList if x in finalMISList}
+            self.dataload_result['misList'] = self.misList
+            self.clustering_result = self.clustering(self.dataload_result)
+            self.entropy_result = self.misranking(self.clustering_result)
+            self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
+            
         return self.entropy_result
 
     def makeFolds(self, profileData, numOfFolds=10):
@@ -108,7 +143,7 @@ class cossyPlus():
     
     def misranking(self, clusternig_result):
         print "calcluating entropy and ranking mis"
-        return mr.computeEntropy(clusternig_result)
+        return mr.computeEntropy(clusternig_result, self.mis_num)
     
     # classification
     def fit(self, data):
