@@ -8,6 +8,8 @@ import dataload as dl
 import clustering as cl
 import misranking as mr
 import random
+import pandas as pd
+import parameter
 
 class cossyPlus():
     def __init__(self,param):
@@ -77,10 +79,16 @@ class cossyPlus():
         return foldedData
     
     def merged(self, foldedData, mergingIdx):
-        
-        return {"profile":pandas.concat([foldedData[x]["profile"] for x in idxs], axis=1), "classes": , "labels":foldedData[idx[0]]["labels"]}
-            
-    
+        #labels don't have to be merged just use one of foldData because it's same for all foldData's element. ('tumor', 'normal')
+        profileMerged = pd.concat([foldedData[x]["profile"] for x in mergingIdx], axis=1)
+
+        classesMerged = []
+        for idx in mergingIdx:
+            classesMerged.extend(foldedData[idx]['classes'])
+
+        labelsMerged = foldedData[mergingIdx[0]]["labels"]
+        return {"profile":profileMerged, "classes":classesMerged, "labels":labelsMerged}
+
     def loadData(self):
         print "start loading data.."
 
@@ -147,3 +155,5 @@ class cossyPlus():
 
 if __name__ == "__main__":
     pass
+
+

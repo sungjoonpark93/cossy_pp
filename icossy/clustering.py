@@ -15,6 +15,7 @@ import numpy as np
 from scipy.spatial.distance import euclidean
 import pandas
 
+
 def ttestRepFunc(data):
     
     tf = data["profile"]
@@ -220,5 +221,3 @@ if __name__ == "__main__":
 #    new = {"profile":pandas.concat([foldedData[x]["profile"] for x in idxs], axis=1), "classes": , "labels":foldedData[idx[0]]["labels"]}
     
 #    pp.pprint(new)
-    
-    
