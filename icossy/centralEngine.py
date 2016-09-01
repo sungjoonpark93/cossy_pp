@@ -15,14 +15,19 @@ from operator import itemgetter
 
 class cossyPlus():
     def __init__(self,param):
-        self.analyze_type = param.analyze_type
+        
+        
         self.cluster_num = param.cluster_num
         self.representativeGene_num = param.representativeGene_num
         self.mis_num = param.mis_num
-        self.clustering_method = param.clustering_method
         self.exp_normalization_type = param.exp_normalization_type
-        self.is_loading_class_file =param.is_loading_class_file
+        
         self.do_tenFold = param.do_tenFold
+
+        self.is_loading_class_file = param.is_loading_class_file
+#        self.clustering_method = param.clustering_method
+
+        self.analyze_type = param.analyze_type
 
         self.exp_file = param.exp_file
         self.mutation_file = param.mutation_file
