@@ -16,18 +16,18 @@ from operator import itemgetter
 class cossyPlus():
     def __init__(self,param):
         
-        
+        self.analyze_type = param.analyze_type
         self.cluster_num = param.cluster_num
         self.representativeGene_num = param.representativeGene_num
         self.mis_num = param.mis_num
         self.exp_normalization_type = param.exp_normalization_type
         
-        self.do_tenFold = param.do_tenFold
+        self.enhancedRobustness = param.enhancedRobustness
 
-        self.is_loading_class_file = param.is_loading_class_file
+#        self.is_loading_class_file = param.is_loading_class_file
 #        self.clustering_method = param.clustering_method
 
-        self.analyze_type = param.analyze_type
+
 
         self.exp_file = param.exp_file
         self.mutation_file = param.mutation_file
@@ -37,16 +37,18 @@ class cossyPlus():
 
         self.misReulst_file = param.misResult_file
 
-        self.run()
+        self.run(self.enhancedRobustness)
 
     def run(self, enhancedRobustness=False):
         if enhancedRobustness == False:
+            print "not doing enhancedRobustness"
             self.dataload_result = self.loadData()
             self.misList = self.dataload_result['misList']
-            self.clustering_result = self.clustering()
+            self.clustering_result = self.clustering(self.dataload_result)
             self.entropy_result = self.misranking(self.clustering_result)
             self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
         else:
+            print "doing enhancedRobustness"
             self.dataload_result = self.loadData()
             allMISList = self.dataload_result['misList']
             
@@ -144,7 +146,7 @@ class cossyPlus():
     
     def clustering(self, data):
         print "start clustering..."
-        return cl.clusteringInMIS(data["profileData"], self.cluster_num,self,self.representativeGene_num, data['misList'])
+        return cl.clusteringInMIS(data["profileData"], self.cluster_num,self.representativeGene_num, data['misList'])
     
     def misranking(self, clusternig_result):
         print "calcluating entropy and ranking mis"
@@ -194,6 +196,17 @@ class cossyPlus():
 
 
 if __name__ == "__main__":
+    data_dir = "Q:\COSSY+\data\preprocessed\TCGA\ICGC/release21/BRCA/for_test/"
+    misoutput_dir = "Q:\COSSY+\mis_result\iCOSSY\TCGA_ICGC/"
+
+    p=parameter.Parameter()
+    p.analyze_type = "expression"
+    p.exp_file=data_dir+"exp.BRCA-US.tsv_preprocessed.gct"
+    p.mutation_file = data_dir+"mut.BRCA-US.tsv_preprocessed.csv"
+    p.misResult_file =misoutput_dir + "BRCA/temp_icossy_brca_result.txt"
+    p.gmt_file = "Q:\COSSY+\data\mis\icossy/kegg_cossy_symbol.gmt"
+
+    cossyPlus(p)
     pass
 
 

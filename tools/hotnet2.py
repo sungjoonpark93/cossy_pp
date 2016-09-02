@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import preprocess.icgc as icgc
 import numpy as np
-
+from subprocess import check_call
 
 
 def ready_mutsigcv_for_generateHeat_from_mutsigcvoutput(mutsigcvoutput):
@@ -17,7 +17,7 @@ def ready_mutsigcv_for_generateHeat_from_mutsigcvoutput(mutsigcvoutput):
     df.to_csv(outputfile,index=False,header=False,sep="\t")
 
 
-def ready_mutation_for_generateHeat_from_icgc_mut(icgc_mutation_file):
+def make_heatjsonfile_for_runHotnet2_from_icgc_using_mutation_option(icgc_mutation_file):
     #make mutation file for input of generateHeat, we should prepare minimum cnafile and snv file
     def dict_to_file(dict_, outputfile):
         w = open(outputfile,'w')
@@ -71,7 +71,13 @@ def ready_mutation_for_generateHeat_from_icgc_mut(icgc_mutation_file):
     icgc_to_snvfile(df,snv_outputfile)
     icgc_to_cnafile(df,cna_outputfile)
 
+    heatjson_outputfile = os.path.splitext(icgc_mutation_file)[0]+"_mutation_for_hotnet2.json"
+    print "making snv ,cna file end. It is now to make json file"
+    check_call(['python','Q:/COSSY+/tools/hotnet2/hotnet2-master/generateHeat.py','mutation','--snv_file',snv_outputfile,'--cna_file',cna_outputfile,"--output_file",heatjson_outputfile])
+
 
 if __name__ == '__main__':
-    icgc_mutation_file = "D:\hotnet2\hotnet2-master\data\ICGC_TCGA\BRCA\simple_somatic_mutation.open.BRCA-US.tsv"
-    ready_mutation_for_generateHeat_from_icgc_mut(icgc_mutation_file)
+    datasets =['COAD','STAD','PRAD','LUSC']
+    for dataset in datasets:
+        icgc_mutation_file = "Q:/COSSY+/tools/hotnet2/hotnet2-master\data/ICGC_TCGA/"+ dataset+"/simple_somatic_mutation.open." +dataset+"-US.tsv"
+        make_heatjsonfile_for_runHotnet2_from_icgc_using_mutation_option(icgc_mutation_file)

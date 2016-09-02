@@ -46,7 +46,8 @@ def representativeScore(data, scoreFunc="ttest"):
 
 
 def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
-    
+    print "start clustering"
+
     result = {}
     
     clustering = AgglomerativeClustering(n_clusters=clusterNum)
