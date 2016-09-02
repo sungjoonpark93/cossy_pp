@@ -66,6 +66,10 @@ def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
         
         representativeGenes = [x for x in ranked if x in misgene][0:topKgene]
         
+        if len(representativeGenes) < topKgene:
+            #raise Exception("not enough genes")
+            continue
+        
         datasubset = data["profile"].ix[representativeGenes].T
         clusteringResult = clustering.fit(X=datasubset)
         clusterLabels = clusteringResult.labels_
