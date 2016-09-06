@@ -101,38 +101,38 @@ def clusteringInMIS(data, clusterNum, topKgene, misList, method="ttest"):
                 
     return result
 
-def classify(data, clustering, dist="euclidean"):
-    
-    if type(data) != "":
-        print "data should be type of DataFrame!"
-        print "please check the type"
-        
-    classification = {}
-    
-    if dist == "euclidean":
-        dist = euclidean
-    
-    classificationList = {}
-    
-    
-    print 
-    print 
-    for pid in data:
-        classificationList[pid] = {}
-        onerec = data[pid]
-        for misid in clustering:
-            clusters = clustering[misid]['c']
-            repgenes = clustering[misid]['repGenes']
-            
-            datasubset = onerec.ix[repgenes].T
-            
-            distances = [(cid, clusters[cid]['label'], dist(datasubset, clusters[cid]['centroid'])) for cid in clusters]
-            
-            closestcid = min(distances, key=itemgetter(2))
-            
-            classificationList[pid][misid] = closestcid
-    
-    return classificationList
+# def classify(data, clustering, dist="euclidean"):
+#
+#     if type(data) != "":
+#         print "data should be type of DataFrame!"
+#         print "please check the type"
+#
+#     classification = {}
+#
+#     if dist == "euclidean":
+#         dist = euclidean
+#
+#     classificationList = {}
+#
+#
+#     print
+#     print
+#     for pid in data:
+#         classificationList[pid] = {}
+#         onerec = data[pid]
+#         for misid in clustering:
+#             clusters = clustering[misid]['c']
+#             repgenes = clustering[misid]['repGenes']
+#
+#             datasubset = onerec.ix[repgenes].T
+#
+#             distances = [(cid, clusters[cid]['label'], dist(datasubset, clusters[cid]['centroid'])) for cid in clusters]
+#
+#             closestcid = min(distances, key=itemgetter(2))
+#
+#             classificationList[pid][misid] = closestcid
+#
+#     return classificationList
 
 if __name__ == "__main__":
     

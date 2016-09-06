@@ -1,19 +1,22 @@
 __author__ = 'SungJoonPark'
 
-# import pandas as pd
-#
-# input_node_file = "Q:/COSSY+/source code/COSSY_source_code/data/networks/string/node-string.txt"
-# input_edge_file = "Q:/COSSY+/source code/COSSY_source_code/data/networks/string/edge-string.txt"
-# output_file = "Q:/COSSY+/data/network/string/string_stringid.sif"
-#
-# node_df =  pd.read_csv(input_node_file,sep='/t',header=None,names=['local_id','string_id'],index_col=0)['string_id']
-#
-# edge_df =  pd.read_csv(input_edge_file,header=None,sep='/t',names=['node1','node2'])
-# edge_df['node1'] = node_df[edge_df['node1']].values
-# edge_df['node2'] = node_df[edge_df['node2']].values
-# edge_df.insert(1,'interaction',['pp']*len(edge_df))
-#
-# edge_df.to_csv(output_file,header=False,index=False,sep='/t')
+import pandas as pd
 
-tempfile = "Q:/COSSY+/tools/hotnet2/hotnet2-master\influence_matrices/string/string_ppr_0.4.h5"
-print tempfile.lower().endswith('h5')
+tmpframe = [ [0.9, 0.9, 0.9, 0.8, 0.9, 0.8, 0.9, 0.0, 0.0, 0.1, 0.0, 0.1, 0.2 ],
+             [0.8, 0.7, 0.6, 0.6, 0.7, 0.4, 0.5, 0.3, 0.1, 0.2, 0.1, 0.1, 0.2 ],
+             [0.4, 0.3, 0.4, 0.4, 0.5, 0.2, 0.5, 0.5, 0.6, 0.7, 0.5, 0.6, 0.6 ],
+             [0.3, 0.5, 0.3, 0.4, 0.3, 0.3, 0.2, 0.3, 0.1, 0.1, 0.4, 0.1, 0.5 ],
+             [0.7, 0.5, 0.6, 0.6, 0.7, 0.8, 0.6, 0.2, 0.1, 0.2, 0.2, 0.6, 0.1 ],
+             [0.4, 0.1, 0.2, 0.1, 0.3, 0.2, 0.1, 0.7, 0.6, 0.7, 0.5, 0.6, 0.4 ],
+             [0.5, 0.3, 0.3, 0.4, 0.3, 0.1, 0.3, 0.2, 0.1, 0.0, 0.0, 0.1, 0.1 ],
+             [0.1, 0.1, 0.2, 0.1, 0.3, 0.1, 0.2, 0.4, 0.3, 0.6, 0.8, 0.6, 0.4 ],
+             [0.7, 0.7, 0.4, 0.7, 0.6, 0.5, 0.7, 0.4, 0.3, 0.5, 0.3, 0.5, 0.4 ],
+             [0.9, 0.8, 0.8, 0.9, 0.7, 0.8, 0.9, 0.7, 0.5, 0.6, 0.7, 0.6, 0.5 ]]
+tmppatients = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13"]
+tmpgenes = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10"]
+
+profileData = {"profile" : pd.DataFrame(data=tmpframe, index=tmpgenes, columns=tmppatients), "classes": [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], "labels":("tumor", "normal")}
+
+b = {column : profileData["classes"][i] for i,column in enumerate(profileData['profile'].columns)}
+
+print b
