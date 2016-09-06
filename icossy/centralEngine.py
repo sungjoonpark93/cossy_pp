@@ -47,10 +47,15 @@ class cossyPlus():
         if enhancedRobustness == False:
             print "not doing enhancedRobustness"
             self.dataload_result = self.loadData()
-            self.misList = self.dataload_result['misList']
-            self.clustering_result = self.clustering(self.dataload_result)
-            self.entropy_result = self.misranking(self.clustering_result)
-            self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
+            if self.doTenfolds==False:
+                self.misList = self.dataload_result['misList']
+                self.clustering_result = self.clustering(self.dataload_result)
+                self.entropy_result = self.misranking(self.clustering_result)
+                self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
+                return self.entropy_result
+            elif self.doTenfolds==True:
+                accuracy = self.nFold_crossValidation(numOfFolds=10)
+                return accuracy
 
 
         else:
@@ -94,37 +99,8 @@ class cossyPlus():
                 return self.entropy_result
 
             elif self.doTenfolds == True:
-                print "doing tenfolds!"
-                numOfFolds = 10
-                foldData = self.makeFolds(self.dataload_result['profileData'], numOfFolds)
-                num_of_correct = 0
-                #total number of patients.
-                num_of_total = len(self.dataload_result['profileData']['profile'].columns)
-
-                for foldID in range(numOfFolds):
-
-                    trainFoldIdx = range(numOfFolds)
-                    trainFoldIdx.remove(foldID)
-
-                    trainFolds = self.merged(foldData, trainFoldIdx)
-                    trainData = {"profileData" : trainFolds, "misList":self.dataload_result['misList']}
-
-                    testFold = foldData[foldID]
-                    testData = {"profileData" : testFold, "misList":self.dataload_result['misList']}
-
-
-                    trainClustering_result = self.clustering(trainData)
-                    trainEntropy_result = self.misranking(trainClustering_result)
-                    trainTopkClustering_result = {mis_entropy[0] : trainClustering_result[mis_entropy[0]] for mis_entropy in trainEntropy_result}
-                    predict_dict = classification.fit(trainTopkClustering_result,testData)
-                    obs_dict = {patient:testData['profileData']['classes'][i] for i,patient in enumerate(testData['profileData']['profile'].columns)}
-
-                    for patient in predict_dict.keys():
-                        if predict_dict[patient] == obs_dict[patient]:
-                            num_of_correct = num_of_correct+1
-                accuarcy = float(num_of_correct) / float(num_of_total)
-
-                return accuarcy
+                accuracy = self.nFold_crossValidation(numOfFolds=10)
+                return accuracy
 
 
     def makeFolds(self, profileData, numOfFolds=10):
@@ -191,7 +167,38 @@ class cossyPlus():
     def misranking(self, clusternig_result):
         print "calcluating entropy and ranking mis"
         return mr.computeEntropy(clusternig_result, self.mis_num)
-    
+
+    def nFold_crossValidation(self, numOfFolds=10):
+        print "doing tenfolds!"
+        foldData = self.makeFolds(self.dataload_result['profileData'], numOfFolds)
+        num_of_correct = 0
+        #total number of patients.
+        num_of_total = len(self.dataload_result['profileData']['profile'].columns)
+
+        for foldID in range(numOfFolds):
+
+            trainFoldIdx = range(numOfFolds)
+            trainFoldIdx.remove(foldID)
+
+            trainFolds = self.merged(foldData, trainFoldIdx)
+            trainData = {"profileData" : trainFolds, "misList":self.dataload_result['misList']}
+
+            testFold = foldData[foldID]
+            testData = {"profileData" : testFold, "misList":self.dataload_result['misList']}
+
+
+            trainClustering_result = self.clustering(trainData)
+            trainEntropy_result = self.misranking(trainClustering_result)
+            trainTopkClustering_result = {mis_entropy[0] : trainClustering_result[mis_entropy[0]] for mis_entropy in trainEntropy_result}
+            predict_dict = classification.fit(trainTopkClustering_result,testData)
+            obs_dict = {patient:testData['profileData']['classes'][i] for i,patient in enumerate(testData['profileData']['profile'].columns)}
+
+            for patient in predict_dict.keys():
+                if predict_dict[patient] == obs_dict[patient]:
+                    num_of_correct = num_of_correct+1
+        accuarcy = float(num_of_correct) / float(num_of_total)
+
+        return accuarcy
     # classification
     # def fit(self, data):
     #
