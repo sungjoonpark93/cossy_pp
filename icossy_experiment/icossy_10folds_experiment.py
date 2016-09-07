@@ -53,7 +53,7 @@ if __name__ == '__main__':
                     cossy_plus = cossyPlus(p)
                     accuracy = cossy_plus.run_CV()
 
-                    outputfile = output_dir + dataset + "/" + "for_test" + aType +"/"+"mis_"+mistype+"_smoothing_"+smoothingSource+"_10foldsAccuracy.txt"
+                    outputfile = output_dir + dataset + "/" + "for_test/" + aType +"/"+"mis_"+mistype+"_smoothing_"+smoothingSource+"_10foldsAccuracy.txt"
                     w = open(outputfile,'w')
                     w.write(str(accuracy))
                     w.close()
