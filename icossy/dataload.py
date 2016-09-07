@@ -91,14 +91,16 @@ def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_f
         exp_df = load_exp_data(exp_file, type='gct')
         network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
         profile = get_profile(mut_df=mut_df , exp_df=exp_df , network_df_for_smoothing=network_df_for_smoothing , type='mut_with_exp')
+    else:
+        raise Exception("type is not specified ")
+
 
     #gene expression normalization
     if analyzing_type=='expression' or analyzing_type =='mut_with_exp':
         print "gene expressionnormalization with " + exp_normalize_tpye
         profile = normalization.normalize_exp_data(profile , type=exp_normalize_tpye)
 
-    else:
-        raise Exception("type is not specified ")
+    
 
     mis_dict = load_gmt_file(gmt_file)
 
