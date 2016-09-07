@@ -33,31 +33,67 @@ class cossyPlus():
         self.exp_file = param.exp_file
         self.mutation_file = param.mutation_file
         self.smoothing_source_file = param.smoothing_source_file
-        self.tenFolds = param.tenFolds
-
         self.gmt_file = param.gmt_file
 
 
         self.doTenfolds = param.doTenfolds
         self.misReulst_file = param.misResult_file
 
-        self.run(self.enhancedRobustness)
 
-    def run(self, enhancedRobustness=False):
-        if enhancedRobustness == False:
+    def run_CV(self):
+        print "doing cross validation"
+        if self.enhancedRobustness==False:
             print "not doing enhancedRobustness"
             self.dataload_result = self.loadData()
-            if self.doTenfolds==False:
-                self.misList = self.dataload_result['misList']
-                self.clustering_result = self.clustering(self.dataload_result)
-                self.entropy_result = self.misranking(self.clustering_result)
-                self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
-                return self.entropy_result
-            elif self.doTenfolds==True:
-                accuracy = self.nFold_crossValidation(numOfFolds=10)
-                return accuracy
+            self.misList = self.dataload_result['misList']
+            accuracy = self.nFold_crossValidation(numOfFolds=10)
+            return accuracy
+        else:
+            print "doing enhancedRobustness"
+            self.dataload_result = self.loadData()
+            allMISList = self.dataload_result['misList']
 
+            numOfFolds = 10
+            foldData = self.makeFolds(self.dataload_result['profileData'], numOfFolds)
 
+            robustMisList = []
+
+            for foldID in range(numOfFolds):
+
+                curFoldIdx = range(numOfFolds)
+                curFoldIdx.remove(foldID)
+
+                curFold = self.merged(foldData, curFoldIdx)
+                inData = {"profileData" : curFold, "misList":allMISList}
+
+                curClustering_result = self.clustering(inData)
+                curEntropy_result = self.misranking(curClustering_result)
+#                self.write_misResult_from_entropyResult(curEntropy_result, self.misReulst_file, self.misList)
+
+                robustMisList.append(curEntropy_result)
+
+            candidateMISwithEntropy = reduce(lambda x, y : x + y, robustMisList)
+
+            cnadidateMISids = [x[0] for x in candidateMISwithEntropy]
+            miscounts = [(misid, cnadidateMISids.count(misid)) for misid in set(cnadidateMISids)]
+            miscounts.sort(key=itemgetter(1), reverse=True)
+
+            finalMISList = [x[0] for x in miscounts[0:self.mis_num]]
+
+            self.misList = {x : allMISList[x] for x in allMISList if x in finalMISList}
+            self.dataload_result['misList'] = self.misList
+            accuracy = self.nFold_crossValidation(numOfFolds=10)
+            return accuracy
+
+    def run(self):
+        if self.enhancedRobustness == False:
+            print "not doing enhancedRobustness"
+            self.dataload_result = self.loadData()
+            self.misList = self.dataload_result['misList']
+            self.clustering_result = self.clustering(self.dataload_result)
+            self.entropy_result = self.misranking(self.clustering_result)
+            self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
+            return self.entropy_result
         else:
             print "doing enhancedRobustness"
             self.dataload_result = self.loadData()
@@ -92,15 +128,12 @@ class cossyPlus():
             
             self.misList = {x : allMISList[x] for x in allMISList if x in finalMISList}
             self.dataload_result['misList'] = self.misList
-            if self.doTenfolds == False:
-                self.clustering_result = self.clustering(self.dataload_result)
-                self.entropy_result = self.misranking(self.clustering_result)
-                self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
-                return self.entropy_result
+            self.clustering_result = self.clustering(self.dataload_result)
+            self.entropy_result = self.misranking(self.clustering_result)
+            self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
+            return self.entropy_result
 
-            elif self.doTenfolds == True:
-                accuracy = self.nFold_crossValidation(numOfFolds=10)
-                return accuracy
+
 
 
     def makeFolds(self, profileData, numOfFolds=10):
@@ -149,12 +182,25 @@ class cossyPlus():
 
     def loadData(self):
         print "start loading data.."
-
+        print "analyzing tye is", self.analyze_type
         if self.analyze_type =='expression':
+            if self.exp_file == None:
+                raise Exception("expression file is not specified")
             dataload_result = dl.load_data(exp_file=self.exp_file,  gmt_file=self.gmt_file, analyzing_type=self.analyze_type , exp_normalize_tpye= self.exp_normalization_type)
         elif self.analyze_type =='mutation':
+            if (self.mutation_file ==None):
+                raise Exception("mutation file is not specified")
+            elif (self.smoothing_source_file ==None):
+                raise Exception("smoothing source file is not specified")
             dataload_result = dl.load_data(mutation_file =self.mutation_file , gmt_file=self.gmt_file, analyzing_type=self.analyze_type , network_file_for_smoothing=self.smoothing_source_file)
         elif self.analyze_type =='mut_with_exp':
+            if (self.mutation_file ==None):
+                raise Exception("mutation file is not specified")
+            elif (self.exp_file ==None):
+                raise Exception("expression file is not specified")
+            elif (self.smoothing_source_file ==None):
+                raise Exception("smoothing source file is not specified")
+
             dataload_result = dl.load_data(exp_file=self.exp_file, mutation_file =self.mutation_file , gmt_file=self.gmt_file, analyzing_type=self.analyze_type , network_file_for_smoothing=self.smoothing_source_file , exp_normalize_tpye= self.exp_normalization_type)
         else:
             raise Exception('unspecified analyzing type')
@@ -196,9 +242,9 @@ class cossyPlus():
             for patient in predict_dict.keys():
                 if predict_dict[patient] == obs_dict[patient]:
                     num_of_correct = num_of_correct+1
-        accuarcy = float(num_of_correct) / float(num_of_total)
+        accuracy = float(num_of_correct) / float(num_of_total)
 
-        return accuarcy
+        return accuracy
     # classification
     # def fit(self, data):
     #

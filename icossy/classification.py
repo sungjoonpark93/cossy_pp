@@ -13,8 +13,9 @@ import pandas
 def classify(data, clustering, dist="euclidean"):
 
     if type(data) != "":
-        print "data should be type of DataFrame!"
-        print "please check the type"
+        pass
+        #print "data should be type of DataFrame!"
+        #print "please check the type"
 
     classification = {}
 

@@ -75,6 +75,7 @@ def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_f
 
     if analyzing_type=='expression':
         print "your analyzing with expression data"
+        print exp_file
         exp_df = load_exp_data(exp_file, type='gct')
         profile = get_profile(exp_df=exp_df)
 

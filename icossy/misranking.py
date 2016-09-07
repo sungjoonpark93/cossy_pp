@@ -12,7 +12,7 @@ def log2(x):
     return log(x) / log(2)
 
 def computeEntropy(clusterResults, misNum=31):
-    print "calculating entropy"
+    #print "calculating entropy"
     misRanking = []
     
     for misid in clusterResults:

@@ -10,7 +10,6 @@ class Parameter:
 
         self.enhancedRobustness = True
         self.mis_num =31
-        self.tenFolds = True
 
         self.exp_file = None
         self.mutation_file = None
@@ -20,7 +19,7 @@ class Parameter:
         self.misResult_file = None
 
 
-        self.doTenfolds = True
+        self.doTenfolds = False
 
 if __name__ =='__main__':
     p = Parameter()
