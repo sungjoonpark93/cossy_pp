@@ -175,9 +175,9 @@ if __name__ == "__main__":
     test = profileData['profile'][['p1','p11']]
     print test
     
-    classes = classify(data=test, clustering=result)
+#    classes = classify(data=test, clustering=result)
     
-    pp.pprint(classes)
+    #pp.pprint(classes)
     
     import random
     
