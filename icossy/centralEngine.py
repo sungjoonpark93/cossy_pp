@@ -58,6 +58,7 @@ class cossyPlus():
 
             robustMisList = []
 
+
             for foldID in range(numOfFolds):
 
                 curFoldIdx = range(numOfFolds)
@@ -65,6 +66,7 @@ class cossyPlus():
 
                 curFold = self.merged(foldData, curFoldIdx)
                 inData = {"profileData" : curFold, "misList":allMISList}
+
 
                 curClustering_result = self.clustering(inData)
                 curEntropy_result = self.misranking(curClustering_result)
@@ -182,7 +184,6 @@ class cossyPlus():
 
     def loadData(self):
         print "start loading data.."
-        print "analyzing tye is", self.analyze_type
         if self.analyze_type =='expression':
             if self.exp_file == None:
                 raise Exception("expression file is not specified")

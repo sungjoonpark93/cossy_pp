@@ -11,7 +11,7 @@ def smoothing(exp_df=None, mut_df =None, network_df = None, type='mut',alpha=0.7
 
     #mutation
     if type=='mut':
-        print("you are going to smoothing mutation data")
+        print("start smoothing mutation")
         s_time = time.time()
         n_iter = 0
 
@@ -39,12 +39,11 @@ def smoothing(exp_df=None, mut_df =None, network_df = None, type='mut',alpha=0.7
     elif type=='mut_with_exp':
         s_time = time.time()
         n_iter = 0
-
+        print("start smoothing mutation data with expression data")
         #reverse_mut_df 1 to 0 0 to 1
-        mutation_value_reversed_mut_df = mut_df.replace([0, 1], [1, 0])
-        mut_preprocessed_df, exp_preprocessed_df = filter.match_sample(mut_preprocessed_df=mutation_value_reversed_mut_df, exp_preprocessed_df=exp_df, conserve_exp_normal_sample=conserve_exp_normal_sample)
+        mut_preprocessed_df, exp_preprocessed_df = filter.match_sample(mut_preprocessed_df=mut_df, exp_preprocessed_df=exp_df, conserve_exp_normal_sample=conserve_exp_normal_sample)
         mut_preprocessed_df, network_df, exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df, network_df=network_df, is_exp=True, exp_preprocessed_df=exp_preprocessed_df)
-
+        mut_preprocessed_df = mut_preprocessed_df.replace([0, 1], [1, 0])
         patient_mutation_df = mut_preprocessed_df.T
         patient_exp_df = exp_preprocessed_df.T
 

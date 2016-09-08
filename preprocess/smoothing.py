@@ -55,8 +55,6 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None, exp_preprocessed_
     '''
 
     mut_preprocessed_df = pd.read_csv(mut_preprocessed_filename, index_col=0)
-    if reverse == True:
-        mut_preprocessed_df = mut_preprocessed_df.replace([0, 1], [1, 0])
     exp_preprocessed_df = pd.read_csv(exp_preprocessed_filename, index_col=0)
     print "network smoothing with exp start\n" + "prprocessed mutation filename:" + mut_preprocessed_filename + "\n" + "preprocessed exp filename:" + exp_preprocessed_filename + "\n" + "network filename for smoothing:" + network_file + "\n" + "output filename" + output_filename
     s_time = time.time()
@@ -64,6 +62,9 @@ def network_smoothing_with_exp(mut_preprocessed_filename=None, exp_preprocessed_
     network_df = network_preprocess.get_network(network_file)
     mut_preprocessed_df, exp_preprocessed_df = filter.match_sample(mut_preprocessed_df=mut_preprocessed_df, exp_preprocessed_df=exp_preprocessed_df, conserve_exp_normal_sample=conserve_exp_normal_sample)
     mut_preprocessed_df, network_df, exp_preprocessed_df = filter.match_gene_with_network_data(mut_preprocessed_df=mut_preprocessed_df, network_df=network_df, is_exp=True, exp_preprocessed_df=exp_preprocessed_df)
+
+    if reverse == True:
+        mut_preprocessed_df = mut_preprocessed_df.replace([0, 1], [1, 0])
 
     patient_mutation_df = mut_preprocessed_df.T
     patient_exp_df = exp_preprocessed_df.T

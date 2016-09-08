@@ -15,9 +15,11 @@ if __name__ == '__main__':
         raise Exception("wrong experiment guy")
 
     #analysis_types = ["expression", "mut_with_exp", "mutation"]
-    analysis_types = ["expression","mutation","mut_with_exp"]
+    #analysis_types = ["expression","mutation","mut_with_exp"]
+    analysis_types = ['mut_with_exp']
     misFiles = {"kegg":"kegg_cossy_symbol.gmt", "keggClusterOne":"keggWhole_clusterONE_symbol.gmt", "stringClusterOne":"string_clusterONE_symbol.gmt", "string":"string_cossy_symbol.gmt"}
-    smoothingSourceFiles = {"string":"string_fix_excel_problem_tab_seperator.sif","reactome":"PathwayCommons.8.reactome.BINARY_SIF_DRUG_deleted.hgnc.txt.sif" , "keggWhole":"KEGG_matrix_GeneSymbol_0_1.sif"}
+    smoothingSourceFiles = {"string":"string_fix_excel_problem_tab_seperator.sif","reactome":"PathwayCommons.8.reactome.BINARY_SIF_DRUG_deleted.hgnc.txt.sif" , "kegg":"KEGG_matrix_GeneSymbol_0_1.sif"}
+    #smoothingSourceFiles = {"string":"string_fix_excel_problem_tab_seperator.sif"}
     output_dir = "Q:/COSSY+/icossy_result/TCGA/ICGC/"
 
     for dataset in datasets:
