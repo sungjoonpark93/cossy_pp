@@ -75,9 +75,18 @@ def make_heatjsonfile_for_runHotnet2_from_icgc_using_mutation_option(icgc_mutati
     print "making snv ,cna file end. It is now to make json file"
     check_call(['python','Q:/COSSY+/tools/hotnet2/hotnet2-master/generateHeat.py','mutation','--snv_file',snv_outputfile,'--cna_file',cna_outputfile,"--output_file",heatjson_outputfile])
 
+def hotnet2outputfile_to_gmtfile(hotnet2outputfile):
+    gmtfile = os.path.splitext(hotnet2outputfile)[0]+".gmt"
+    w = open(gmtfile,'w')
+    with open(hotnet2outputfile,'r') as r:
+        for i,line in enumerate(r):
+            w.write(str(i)+"\t"+"hotnet2"+"\t"+line)
+    w.close()
 
 if __name__ == '__main__':
-    datasets =['COAD','STAD','PRAD','LUSC']
-    for dataset in datasets:
-        icgc_mutation_file = "Q:/COSSY+/tools/hotnet2/hotnet2-master\data/ICGC_TCGA/"+ dataset+"/simple_somatic_mutation.open." +dataset+"-US.tsv"
-        make_heatjsonfile_for_runHotnet2_from_icgc_using_mutation_option(icgc_mutation_file)
+    # datasets =['COAD','STAD','PRAD','LUSC']
+    # for dataset in datasets:
+    #     icgc_mutation_file = "Q:/COSSY+/tools/hotnet2/hotnet2-master\data/ICGC_TCGA/"+ dataset+"/simple_somatic_mutation.open." +dataset+"-US.tsv"
+    #     make_heatjsonfile_for_runHotnet2_from_icgc_using_mutation_option(icgc_mutation_file)
+    hotnet2outputfile = "Q:\COSSY+/tools\hotnet2\hotnet2-master\hotnet_output\STAD\delta_0.00137960659199/components.txt"
+    hotnet2outputfile_to_gmtfile(hotnet2outputfile)
