@@ -19,12 +19,16 @@ def load_gmt_file(gmt_file):
     return mis_dict
 
 
-def load_exp_data(gct_file,type='gct'):
+def load_exp_data(exp_file,type='preprocessed'):
     if type=='gct':
         #exp file is gct_format
-        print "loading gct file"
+        print "loading expression file(gct)"
         #read gct file and make as gene x patient dataframe
-        exp_df = pd.read_csv(gct_file, sep='\t',skiprows=2).drop('Description',axis=1).set_index('Name')
+        exp_df = pd.read_csv(exp_file, sep='\t',skiprows=2).drop('Description',axis=1).set_index('Name')
+
+    elif type =='preprocessed':
+        print "loading expression file(preprocessed)"
+        exp_df=pd.read_csv(exp_file,index_col=0)
 
 
     return exp_df
