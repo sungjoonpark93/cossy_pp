@@ -19,8 +19,6 @@ class Parameter:
         self.misResult_file = None
 
 
-        self.doTenfolds = False
-
 if __name__ =='__main__':
     p = Parameter()
     p.analyze_type = "exp_mut"

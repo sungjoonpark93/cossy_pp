@@ -28,64 +28,12 @@ class cossyPlus():
 #        self.is_loading_class_file = param.is_loading_class_file
 #        self.clustering_method = param.clustering_method
 
-
-
         self.exp_file = param.exp_file
         self.mutation_file = param.mutation_file
         self.smoothing_source_file = param.smoothing_source_file
         self.gmt_file = param.gmt_file
-
-
-        self.doTenfolds = param.doTenfolds
         self.misReulst_file = param.misResult_file
 
-
-    def run_CV(self):
-        print "doing cross validation"
-        if self.enhancedRobustness==False:
-            print "not doing enhancedRobustness"
-            self.dataload_result = self.loadData()
-            self.misList = self.dataload_result['misList']
-            accuracy = self.nFold_crossValidation(numOfFolds=10)
-            return accuracy
-        else:
-            print "doing enhancedRobustness"
-            self.dataload_result = self.loadData()
-            allMISList = self.dataload_result['misList']
-
-            numOfFolds = 10
-            foldData = self.makeFolds(self.dataload_result['profileData'], numOfFolds)
-
-            robustMisList = []
-
-
-            for foldID in range(numOfFolds):
-
-                curFoldIdx = range(numOfFolds)
-                curFoldIdx.remove(foldID)
-
-                curFold = self.merged(foldData, curFoldIdx)
-                inData = {"profileData" : curFold, "misList":allMISList}
-
-
-                curClustering_result = self.clustering(inData)
-                curEntropy_result = self.misranking(curClustering_result)
-#                self.write_misResult_from_entropyResult(curEntropy_result, self.misReulst_file, self.misList)
-
-                robustMisList.append(curEntropy_result)
-
-            candidateMISwithEntropy = reduce(lambda x, y : x + y, robustMisList)
-
-            cnadidateMISids = [x[0] for x in candidateMISwithEntropy]
-            miscounts = [(misid, cnadidateMISids.count(misid)) for misid in set(cnadidateMISids)]
-            miscounts.sort(key=itemgetter(1), reverse=True)
-
-            finalMISList = [x[0] for x in miscounts[0:self.mis_num]]
-
-            self.misList = {x : allMISList[x] for x in allMISList if x in finalMISList}
-            self.dataload_result['misList'] = self.misList
-            accuracy = self.nFold_crossValidation(numOfFolds=10)
-            return accuracy
 
     def run(self):
         if self.enhancedRobustness == False:
@@ -132,9 +80,11 @@ class cossyPlus():
             self.dataload_result['misList'] = self.misList
             self.clustering_result = self.clustering(self.dataload_result)
             self.entropy_result = self.misranking(self.clustering_result)
-            self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
-            return self.entropy_result
+            if not self.misReulst_file == None:
+                print "your are outputing misResult"
+                self.write_misResult_from_entropyResult(self.entropy_result,self.misReulst_file,self.misList)
 
+            return self.entropy_result
 
 
 
@@ -271,9 +221,6 @@ class cossyPlus():
 
     
     def write_misResult_from_entropyResult(self,entropy_result, outputfile, misList):
-        if outputfile == None:
-            raise Exception("you didn't specified the outputfile")
-
         w = open(outputfile,'w')
         for misid_result_tuple in entropy_result:
 

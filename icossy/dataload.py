@@ -8,14 +8,17 @@ import preprocess.smoothing_for_icossy as smoothing
 import base.filter as basefilter
 import normalization
 
-def load_gmt_file(gmt_file):
-    print "loading gmt file"
+def load_gmt_file(gmt_file=None):
+    print "loading gmt file", gmt_file
     #gmt file name should like "kegg.gmt". In this case kegg is used as a part of key of mis dit
     #read gmt file and make mis_dict
-    with open(gmt_file,'r') as r:
-        filename = os.path.split(gmt_file)[1]
-        mis_source = filename.split('.')[0]
-        mis_dict = {"mis_"+mis_source+"_"+str(i):line.strip().split('\t')[2:] for i,line in enumerate(r)}
+    if gmt_file==None:
+        mis_dict={}
+    else:
+        with open(gmt_file,'r') as r:
+            filename = os.path.split(gmt_file)[1]
+            mis_source = filename.split('.')[0]
+            mis_dict = {"mis_"+mis_source+"_"+str(i):line.strip().split('\t')[2:] for i,line in enumerate(r)}
     return mis_dict
 
 
@@ -80,7 +83,7 @@ def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_f
     if analyzing_type=='expression':
         print "your analyzing with expression data"
         print exp_file
-        exp_df = load_exp_data(exp_file, type='gct')
+        exp_df = load_exp_data(exp_file)
         profile = get_profile(exp_df=exp_df)
 
     elif analyzing_type =='mutation':
@@ -92,7 +95,7 @@ def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_f
     elif analyzing_type =='mut_with_exp':
         print "your analyzing with mutation data and expression data"
         mut_df = load_mutation_data(mutation_file)
-        exp_df = load_exp_data(exp_file, type='gct')
+        exp_df = load_exp_data(exp_file)
         network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
         profile = get_profile(mut_df=mut_df , exp_df=exp_df , network_df_for_smoothing=network_df_for_smoothing , type='mut_with_exp')
     else:
