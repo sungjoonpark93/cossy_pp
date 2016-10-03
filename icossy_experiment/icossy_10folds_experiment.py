@@ -8,11 +8,13 @@ import os
 
 if __name__ =='__main__':
     nFold = 10
-    datasets = ["BRCA","COAD","LUSC","PRAD","STAD"]
-    analysis_types = ["expression","mut_with_exp","mutation"]
+    #datasets = ["BRCA","COAD","LUSC","PRAD","STAD"]
+    datasets = ["COAD","LUSC","PRAD","STAD"]
+    #analysis_types = ["expression","mut_with_exp","mutation"]
+    analysis_types = ['expression','mut_with_exp']
     misFiles = {"kegg":"kegg_cossy_symbol.gmt", "keggClusterOne":"keggWhole_clusterONE_symbol.gmt", "stringClusterOne":"string_clusterONE_symbol.gmt", "string":"string_cossy_symbol.gmt"}
-    smoothingSourceFiles = {"reactome":"PathwayCommons.8.reactome.BINARY_SIF_DRUG_deleted.hgnc.txt.sif" , "kegg":"KEGG_matrix_GeneSymbol_0_1.sif"}
-    output_dir = "Q:/COSSY+/icossy_result/TCGA/ICGC/"
+    smoothingSourceFiles = {"string":"string_fix_excel_problem_tab_seperator.sif"}
+    #output_dir = "Q:/COSSY+/icossy_result/TCGA/ICGC/"
     for dataset in datasets:
         for aType in analysis_types:
             for mistype in misFiles:

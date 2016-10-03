@@ -26,10 +26,18 @@ def get_sample_list(preprocessed_df):
 
 def get_sample_classes_and_lables(preprocessed_df):
     #conver sample list into classes and labels in which classes is [1,0,0] and lables is [tumor, normal]
+    #tumor is 1 , normal is 0
     sample_list = get_sample_list(preprocessed_df)
     sample_label_list = ['normal' if int(sample[13:15])>=10 else "tumor" for sample in sample_list]
-    labels = tuple(list(set(sample_label_list)))
-    classes = [{labels[0]:1,labels[1]:0}[label] for label in sample_label_list]
+    labels = ('normal','tumor')
+
+    classes = []
+    for label in sample_label_list:
+        if label == 'tumor':
+            classes.append(1)
+        elif label =='normal':
+            classes.append(0)
+
     return {'classes':classes,'labels':labels}
 
 

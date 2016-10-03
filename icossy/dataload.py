@@ -99,7 +99,7 @@ def load_data(exp_file=None,  mutation_file=None,  gmt_file=None, network_file_f
         network_df_for_smoothing = network_preprocess.get_network(network_file_for_smoothing)
         profile = get_profile(mut_df=mut_df , exp_df=exp_df , network_df_for_smoothing=network_df_for_smoothing , type='mut_with_exp')
     else:
-        raise Exception("type is not specified ")
+        raise Exception("analyzing type is wrong ")
 
 
     #gene expression normalization
